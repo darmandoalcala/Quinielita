@@ -16,7 +16,7 @@ const AppState = {
     activeTicketComments: [],
     leaderboard: [],
     activeTab: 'tab-quiniela',
-    currentDate: new Date("2026-06-01T13:49:44-06:00") // Sincronizado con tiempo local de metadatos
+    currentDate: new Date() // Sincronizado en tiempo real con el servidor/cliente
 };
 
 // Carga Inicial del DOM
@@ -452,12 +452,12 @@ function renderMatches() {
                 if (earned === 3) {
                     pointsTag = `<div class="points-earned-tag gold">+3 Puntos (Exacto)</div>`;
                 } else if (earned === 1) {
-                    pointsTag = `<div class="points-earned-tag" style="background: linear-gradient(135deg, #a1a1aa, #52525b);">+1 Punto (Resultado)</div>`;
+                    pointsTag = `<div class="points-earned-tag" style="background: #475569; color: white;">+1 Punto (Resultado)</div>`;
                 } else {
-                    pointsTag = `<div class="points-earned-tag" style="background: linear-gradient(135deg, var(--danger), #b91c1c); color:white;">0 Puntos</div>`;
+                    pointsTag = `<div class="points-earned-tag" style="background: var(--danger); color: white;">0 Puntos</div>`;
                 }
             } else {
-                pointsTag = `<div class="points-earned-tag" style="background: var(--bg-card); color: var(--text-muted); border: 1px solid var(--border-card);">Sin Apuesta</div>`;
+                pointsTag = `<div class="points-earned-tag" style="background: rgba(255, 255, 255, 0.05); color: var(--text-muted); border: 1px solid var(--border-card);">Sin Apuesta</div>`;
             }
 
             realScoreBadge = `
@@ -740,7 +740,7 @@ async function loadLeaderboardData() {
                 rfcShow = `${rfcShow.substring(0, 4)}******${rfcShow.substring(10)}`;
             }
 
-            const contactShow = isMe ? `${player.correo} / ${player.telefono}` : "🔒 Protegido";
+            const contactShow = isMe ? `${player.correo} / ${player.telefono}` : "[Protegido]";
 
             const tr = document.createElement("tr");
             tr.innerHTML = `
