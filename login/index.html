@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sesión - Quiniela Mundial 2026</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- Supabase JS Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <!-- Estilos Compartidos -->
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+    <!-- Notificaciones Toast -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- Fondo Dinámico -->
+    <div class="bg-glow bg-glow-1"></div>
+    <div class="bg-glow bg-glow-2"></div>
+
+    <!-- PANTALLA: CARGA / CARGANDO -->
+    <div id="loading-screen" class="screen loading-screen">
+        <div class="spinner-container">
+            <div class="spinner"></div>
+            <p>Verificando credenciales...</p>
+        </div>
+    </div>
+
+    <!-- PANTALLA: AUTENTICACIÓN (LOGIN / REGISTRO) -->
+    <div id="auth-screen" class="screen auth-screen">
+        <!-- Botón para regresar como espectador -->
+        <a href="../index.html" class="btn btn-secondary btn-sm" style="position: absolute; top: 24px; left: 24px; gap: 6px;">
+            <i data-lucide="arrow-left" style="width: 14px; height: 14px;"></i>
+            <span>Ver Partidos (Espectador)</span>
+        </a>
+
+        <div class="glass-card auth-card animate-fade-in">
+            <!-- Selector de Tabs Auth -->
+            <div class="auth-tabs">
+                <button id="tab-login-btn" class="auth-tab active" onclick="switchAuthTab('login')">
+                    <i data-lucide="log-in"></i> Iniciar Sesión
+                </button>
+                <button id="tab-register-btn" class="auth-tab" onclick="switchAuthTab('register')">
+                    <i data-lucide="user-plus"></i> Registrarse
+                </button>
+            </div>
+
+            <!-- Formulario de Login -->
+            <form id="login-form" class="auth-form animate-slide-up">
+                <div class="auth-header">
+                    <h2>Bienvenido de Nuevo</h2>
+                    <p class="subtitle">Ingresa tus datos para acceder a tus pronósticos.</p>
+                </div>
+                <div class="input-wrapper">
+                    <label for="login-email">Correo Electrónico</label>
+                    <div class="input-icon-container">
+                        <i data-lucide="mail" class="input-icon"></i>
+                        <input type="email" id="login-email" placeholder="ejemplo@correo.com" required autocomplete="email">
+                    </div>
+                </div>
+                <div class="input-wrapper">
+                    <label for="login-rfc">RFC (Tu Contraseña)</label>
+                    <div class="input-icon-container">
+                        <i data-lucide="shield-check" class="input-icon"></i>
+                        <input type="text" id="login-rfc" minlength="13" maxlength="13" placeholder="RFC123456XYZ" required style="text-transform: uppercase;">
+                    </div>
+                    <small class="helper-text">Tu RFC de 13 dígitos es tu contraseña segura de acceso.</small>
+                </div>
+                <button type="submit" class="btn btn-primary btn-full">
+                    <span>Entrar a la Quiniela</span>
+                    <i data-lucide="arrow-right"></i>
+                </button>
+            </form>
+
+            <!-- Formulario de Registro -->
+            <form id="register-form" class="auth-form hidden animate-slide-up">
+                <div class="auth-header">
+                    <h2>Únete a la Quiniela</h2>
+                    <p class="subtitle">Regístrate para participar en la Quiniela del Mundial 2026.</p>
+                </div>
+                <div class="input-wrapper">
+                    <label for="register-name">Nombre Completo</label>
+                    <div class="input-icon-container">
+                        <i data-lucide="user" class="input-icon"></i>
+                        <input type="text" id="register-name" placeholder="Juan Pérez López" required>
+                    </div>
+                </div>
+                <div class="input-wrapper">
+                    <label for="register-email">Correo Electrónico</label>
+                    <div class="input-icon-container">
+                        <i data-lucide="mail" class="input-icon"></i>
+                        <input type="email" id="register-email" placeholder="ejemplo@correo.com" required autocomplete="email">
+                    </div>
+                </div>
+                <div class="input-wrapper">
+                    <label for="register-phone">Número de Teléfono</label>
+                    <div class="input-icon-container">
+                        <i data-lucide="phone" class="input-icon"></i>
+                        <input type="tel" id="register-phone" placeholder="5512345678" required>
+                    </div>
+                </div>
+                <div class="input-wrapper">
+                    <label for="register-rfc">RFC (Será tu Contraseña)</label>
+                    <div class="input-icon-container">
+                        <i data-lucide="shield-check" class="input-icon"></i>
+                        <input type="text" id="register-rfc" minlength="13" maxlength="13" placeholder="RFC123456XYZ" required style="text-transform: uppercase;">
+                    </div>
+                    <small class="helper-text">El RFC debe tener exactamente 13 caracteres.</small>
+                </div>
+                <button type="submit" class="btn btn-primary btn-full">
+                    <span>Crear Cuenta</span>
+                    <i data-lucide="check"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Scripts de Configuración y Autenticación -->
+    <script src="../js/config.js"></script>
+    <script src="../js/supabase.js"></script>
+    <script>
+        // Inicializar iconos de Lucide al cargar
+        document.addEventListener("DOMContentLoaded", async () => {
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+            
+            // Ocultar pantalla de carga inicial
+            document.getElementById("loading-screen").classList.add("hidden");
+            
+            // Si ya hay una sesión activa, redireccionar al root index.html
+            if (window.supabaseClient) {
+                const { data: { session } } = await window.supabaseClient.auth.getSession();
+                if (session) {
+                    window.location.href = "../index.html";
+                }
+            } else {
+                console.error("Supabase no está configurado.");
+            }
+        });
+
+        // Alternar entre login y registro
+        function switchAuthTab(tab) {
+            const loginForm = document.getElementById("login-form");
+            const registerForm = document.getElementById("register-form");
+            const loginTabBtn = document.getElementById("tab-login-btn");
+            const registerTabBtn = document.getElementById("tab-register-btn");
+
+            if (tab === 'login') {
+                loginForm.classList.remove("hidden");
+                registerForm.classList.add("hidden");
+                loginTabBtn.classList.add("active");
+                registerTabBtn.classList.remove("active");
+            } else {
+                loginForm.classList.add("hidden");
+                registerForm.classList.remove("hidden");
+                loginTabBtn.classList.remove("active");
+                registerTabBtn.classList.add("active");
+            }
+            
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+        }
+
+        // Enviar formulario de Login
+        document.getElementById("login-form").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const email = document.getElementById("login-email").value;
+            const rfc = document.getElementById("login-rfc").value.toUpperCase().trim();
+            
+            document.getElementById("loading-screen").classList.remove("hidden");
+            
+            try {
+                if (!window.supabaseClient) throw new Error("Conexión no establecida.");
+                
+                const { data, error } = await window.supabaseClient.auth.signInWithPassword({
+                    email: email,
+                    password: rfc
+                });
+                
+                if (error) throw error;
+                
+                // Redireccionar al Dashboard principal
+                window.location.href = "../index.html";
+            } catch (err) {
+                console.error("Error login:", err);
+                showToast("Datos Incorrectos", "El correo o contraseña (RFC) son inválidos.", "error");
+                document.getElementById("loading-screen").classList.add("hidden");
+            }
+        });
+
+        // Enviar formulario de Registro
+        document.getElementById("register-form").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const nombre = document.getElementById("register-name").value.trim();
+            const email = document.getElementById("register-email").value.trim();
+            const telefono = document.getElementById("register-phone").value.trim();
+            const rfc = document.getElementById("register-rfc").value.toUpperCase().trim();
+            
+            if (rfc.length !== 13) {
+                showToast("Identificador Inválido", "El RFC debe tener exactamente 13 caracteres.", "error");
+                return;
+            }
+            
+            document.getElementById("loading-screen").classList.remove("hidden");
+            
+            try {
+                if (!window.supabaseClient) throw new Error("Conexión no establecida.");
+                
+                // 1. Crear usuario
+                const { data, error } = await window.supabaseClient.auth.signUp({
+                    email: email,
+                    password: rfc
+                });
+                
+                if (error) throw error;
+                if (!data.user) throw new Error("No se pudo completar el registro.");
+                
+                // 2. Insertar perfil
+                const { error: profileError } = await window.supabaseClient
+                    .from('usuarios')
+                    .insert([{
+                        id: data.user.id,
+                        nombre_completo: nombre,
+                        correo: email,
+                        telefono: telefono,
+                        rfc: rfc
+                    }]);
+                    
+                if (profileError) throw profileError;
+                
+                showToast("Registro Completado", "Tu cuenta ha sido creada. Iniciando sesión...", "success");
+                
+                // Iniciar sesión automáticamente
+                await window.supabaseClient.auth.signInWithPassword({
+                    email: email,
+                    password: rfc
+                });
+                
+                window.location.href = "../index.html";
+            } catch (err) {
+                console.error("Error register:", err);
+                showToast("Fallo al Registrar", err.message || "No se pudo crear la cuenta.", "error");
+                document.getElementById("loading-screen").classList.add("hidden");
+            }
+        });
+
+        // Toast de notificaciones
+        function showToast(title, message, type = "info") {
+            const container = document.getElementById("toast-container");
+            if (!container) return;
+            
+            const toast = document.createElement("div");
+            toast.className = `toast ${type}`;
+            
+            let iconName = "info";
+            if (type === "success") iconName = "check-circle";
+            else if (type === "error") iconName = "alert-circle";
+            
+            toast.innerHTML = `
+                <i data-lucide="${iconName}"></i>
+                <div class="toast-content">
+                    <div class="toast-title">${title}</div>
+                    <div class="toast-message">${message}</div>
+                </div>
+                <button class="toast-close" onclick="this.parentElement.remove()">
+                    <i data-lucide="x" style="width:12px; height:12px;"></i>
+                </button>
+            `;
+            
+            container.appendChild(toast);
+            
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+            
+            setTimeout(() => {
+                toast.classList.add("show");
+            }, 10);
+            
+            setTimeout(() => {
+                toast.classList.remove("show");
+                setTimeout(() => {
+                    toast.remove();
+                }, 400);
+            }, 5000);
+        }
+    </script>
+</body>
+</html>
