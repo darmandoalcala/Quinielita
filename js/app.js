@@ -673,7 +673,7 @@ async function loadLeaderboardData() {
     
     tbody.innerHTML = `
         <tr>
-            <td colspan="6" class="text-center py-4">
+            <td colspan="5" class="text-center py-4">
                 <div class="spinner inline-spinner"></div> Cargando tabla de posiciones...
             </td>
         </tr>
@@ -734,13 +734,6 @@ async function loadLeaderboardData() {
             else if (rank === 3) rankClass = "rank-bronze";
             
             const isMe = AppState.session ? player.id === AppState.session.user.id : false;
-            
-            let rfcShow = player.rfc || "S/D";
-            if (rfcShow.length === 13) {
-                rfcShow = `${rfcShow.substring(0, 4)}******${rfcShow.substring(10)}`;
-            }
-
-            const contactShow = isMe ? `${player.correo} / ${player.telefono}` : "[Protegido]";
 
             const tr = document.createElement("tr");
             tr.innerHTML = `
@@ -751,19 +744,16 @@ async function loadLeaderboardData() {
                     <span class="participant-name">${player.nombre_completo}</span>
                     ${isMe ? '<span class="participant-you-tag">Tú</span>' : ''}
                 </td>
-                <td style="font-family: monospace; font-size: 0.85rem;">
-                    ${rfcShow}
-                </td>
                 <td class="participant-subtext">
-                    ${contactShow}
+                    ${player.correo}
                 </td>
-                <td>
+                <td style="text-align: center;">
                     <span class="pts-col-val">${player.points}</span>
                 </td>
                 <td style="text-align: center;">
                     <button class="btn-view-predictions" onclick="viewPlayerPredictions('${player.id}')">
                         <i data-lucide="eye" style="width: 14px; height: 14px;"></i>
-                        <span>Ver Apuestas</span>
+                        <span>Ver Pronósticos</span>
                     </button>
                 </td>
             `;
@@ -778,7 +768,7 @@ async function loadLeaderboardData() {
         console.error("Error al construir leaderboard:", err);
         tbody.innerHTML = `
             <tr>
-                <td colspan="6" class="text-center py-4" style="color: var(--danger);">
+                <td colspan="5" class="text-center py-4" style="color: var(--danger);">
                     <i data-lucide="alert-triangle" style="vertical-align: middle;"></i> 
                     No se pudieron cargar los datos de clasificación. Inténtalo más tarde.
                 </td>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quiniela Mundial 2026 - Portal Oficial</title>
+    <title>Quiniela Zenth</title>
     
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -28,7 +28,7 @@
     <div id="loading-screen" class="screen loading-screen">
         <div class="spinner-container">
             <div class="spinner"></div>
-            <p>Cargando quiniela mundialista...</p>
+            <p>Cargando quiniela...</p>
         </div>
     </div>
 
@@ -39,8 +39,8 @@
             <div class="header-logo">
                 <img src="img/logo.png" alt="Logo Empresa" class="company-logo" style="filter: brightness(100)">
                 <div class="logo-text">
-                    <h1>QUINIELA 2026</h1>
-                    <span class="badge badge-gold">FIFA World Cup 2026</span>
+                    <h1>QUINIELA</h1>
+                    <span>FIFA World Cup 2026</span>
                 </div>
             </div>
             
@@ -97,8 +97,8 @@
                         <div class="select-wrapper">
                             <i data-lucide="clock" class="select-icon"></i>
                             <select id="status-filter">
-                                <option value="ALL">Todos los Estados</option>
-                                <option value="Pendiente">Disponibles / Pendientes</option>
+                                <option value="ALL">Todo</option>
+                                <option value="Pendiente">Pendientes</option>
                                 <option value="Finalizado">Finalizados</option>
                                 <option value="Apuestas" id="filter-my-predictions" style="display:none;">Mis Pronósticos</option>
                             </select>
@@ -128,16 +128,15 @@
                             <thead>
                                 <tr>
                                     <th style="width: 80px;">Rango</th>
-                                    <th>Participante</th>
-                                    <th>Identificador</th>
-                                    <th>Contacto</th>
-                                    <th style="text-align: center;">Puntos</th>
-                                    <th style="text-align: center; width: 120px;">Predicciones</th>
+                                    <th>Nombre</th>
+                                    <th>Correo</th>
+                                    <th style="text-align: center; width: 100px;">Puntos</th>
+                                    <th style="text-align: center; width: 160px;">Acción</th>
                                 </tr>
                             </thead>
                             <tbody id="leaderboard-body">
                                 <tr>
-                                    <td colspan="6" class="text-center py-4">
+                                    <td colspan="5" class="text-center py-4">
                                         <div class="spinner inline-spinner"></div> Cargando tabla de clasificación...
                                     </td>
                                 </tr>
