@@ -417,6 +417,9 @@ function renderMatches() {
         return true;
     });
 
+    // Ordenar los partidos explícitamente por fecha y hora de menor a mayor
+    filteredMatches.sort((a, b) => new Date(a.fecha_hora) - new Date(b.fecha_hora));
+
     if (filteredMatches.length === 0) {
         grid.innerHTML = `
             <div class="loading-placeholder">
