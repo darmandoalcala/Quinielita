@@ -1,8 +1,4 @@
-/**
- * ==========================================================================
- * LÓGICA DE APLICACIÓN PRINCIPAL (SPA) - QUINIELA MUNDIAL 2026
- * ==========================================================================
- */
+
 
 // Estado Global de la Aplicación
 const AppState = {
@@ -16,7 +12,9 @@ const AppState = {
     activeTicketComments: [],
     leaderboard: [],
     activeTab: 'tab-quiniela',
-    currentDate: new Date() // Sincronizado en tiempo real con el servidor/cliente
+    currentDate: new Date(), // Sincronizado en tiempo real con el servidor/cliente
+    matchesPerPage: 24, // Partidos a mostrar por lote
+    matchesDisplayed: 24 // Cantidad actual de partidos visibles
 };
 
 // Carga Inicial del DOM
@@ -149,15 +147,21 @@ function setupEventListeners() {
         });
     });
 
-    // Filtros de Quiniela
+    // Filtros de Quiniela (resetean la paginación al cambiar)
     const groupFilter = document.getElementById("group-filter");
     if (groupFilter) {
-        groupFilter.addEventListener("change", renderMatches);
+        groupFilter.addEventListener("change", () => {
+            AppState.matchesDisplayed = AppState.matchesPerPage;
+            renderMatches();
+        });
     }
     
     const statusFilter = document.getElementById("status-filter");
     if (statusFilter) {
-        statusFilter.addEventListener("change", renderMatches);
+        statusFilter.addEventListener("change", () => {
+            AppState.matchesDisplayed = AppState.matchesPerPage;
+            renderMatches();
+        });
     }
 
     // Crear Incidencia / Ticket
@@ -281,6 +285,9 @@ async function initDashboard() {
 async function loadQuinielaData() {
     const grid = document.getElementById("matches-grid");
     if (!grid) return;
+    
+    // Resetear paginación al recargar datos completos
+    AppState.matchesDisplayed = AppState.matchesPerPage;
     
     try {
         // Cargar equipos
@@ -431,7 +438,11 @@ function renderMatches() {
         return;
     }
 
-    filteredMatches.forEach(match => {
+    // Carga dinámica: solo mostrar los primeros N partidos
+    const visibleMatches = filteredMatches.slice(0, AppState.matchesDisplayed);
+    const remaining = filteredMatches.length - AppState.matchesDisplayed;
+
+    visibleMatches.forEach((match, index) => {
         const localTeam = match.equipo_local || { nombre: "Local", siglas: "LOC", codigo_iso: "unknown", grupo: "A" };
         const visitTeam = match.equipo_visitante || { nombre: "Visitante", siglas: "VIS", codigo_iso: "unknown", grupo: "A" };
         
@@ -513,6 +524,8 @@ function renderMatches() {
 
         const card = document.createElement("div");
         card.className = `glass-card match-card ${isLocked && !isFinished ? '' : 'pulsing-border'}`;
+        // Animación escalonada para las tarjetas nuevas
+        card.style.animationDelay = `${index * 0.04}s`;
         card.innerHTML = `
             ${pointsTag}
             <div class="match-header-info">
@@ -576,8 +589,45 @@ function renderMatches() {
         grid.appendChild(card);
     });
 
+    // Botón "Cargar más" si hay partidos restantes
+    if (remaining > 0) {
+        const loadMoreContainer = document.createElement("div");
+        loadMoreContainer.className = "load-more-container";
+        loadMoreContainer.innerHTML = `
+            <div class="load-more-divider"></div>
+            <button class="load-more-btn" id="load-more-matches-btn" onclick="loadMoreMatches()">
+                <i data-lucide="chevrons-down" style="width: 18px; height: 18px;"></i>
+                <span>Cargar más partidos</span>
+                <span class="load-more-count">${remaining} restante${remaining !== 1 ? 's' : ''}</span>
+            </button>
+            <p class="load-more-hint">Mostrando ${visibleMatches.length} de ${filteredMatches.length} partidos</p>
+        `;
+        grid.appendChild(loadMoreContainer);
+    }
+
     if (typeof lucide !== 'undefined') {
         lucide.createIcons();
+    }
+}
+
+// Acción: Cargar más partidos (carga dinámica)
+function loadMoreMatches() {
+    AppState.matchesDisplayed += AppState.matchesPerPage;
+    renderMatches();
+    
+    // Scroll suave hacia los nuevos partidos cargados
+    const grid = document.getElementById("matches-grid");
+    if (grid) {
+        const cards = grid.querySelectorAll('.match-card');
+        if (cards.length > 0) {
+            // Scroll al primer nuevo card visible
+            const scrollTarget = cards[cards.length - Math.min(AppState.matchesPerPage, cards.length)];
+            if (scrollTarget) {
+                setTimeout(() => {
+                    scrollTarget.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 100);
+            }
+        }
     }
 }
 

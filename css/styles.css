@@ -876,6 +876,94 @@ h1, h2, h3, h4, h5, h6 {
     border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
+/* Carga Dinámica - Botón "Cargar más" */
+.load-more-container {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: 1.5rem 0 0.5rem 0;
+    animation: fadeIn 0.5s ease forwards;
+}
+
+.load-more-divider {
+    width: 100%;
+    max-width: 320px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border-card), rgba(132, 197, 76, 0.2), var(--border-card), transparent);
+    margin-bottom: 4px;
+}
+
+.load-more-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 0.85rem 2rem;
+    background: linear-gradient(135deg, rgba(132, 197, 76, 0.08), rgba(132, 197, 76, 0.03));
+    border: 1px solid rgba(132, 197, 76, 0.18);
+    border-radius: var(--radius-lg);
+    color: var(--primary);
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.load-more-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at center, rgba(132, 197, 76, 0.06), transparent 70%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.load-more-btn:hover {
+    background: linear-gradient(135deg, rgba(132, 197, 76, 0.15), rgba(132, 197, 76, 0.06));
+    border-color: rgba(132, 197, 76, 0.35);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(132, 197, 76, 0.12), 0 0 0 1px rgba(132, 197, 76, 0.08);
+}
+
+.load-more-btn:hover::before {
+    opacity: 1;
+}
+
+.load-more-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(132, 197, 76, 0.08);
+}
+
+.load-more-btn i {
+    animation: bounceDown 1.8s ease-in-out infinite;
+}
+
+.load-more-count {
+    background: rgba(132, 197, 76, 0.12);
+    color: var(--primary);
+    padding: 2px 8px;
+    border-radius: 9999px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+}
+
+.load-more-hint {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+@keyframes bounceDown {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(3px); }
+}
+
 .leaderboard-container {
     padding: 0;
     overflow: hidden;
