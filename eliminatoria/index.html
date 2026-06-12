@@ -1,5 +1,5 @@
-<html lang="en">
-
+<!DOCTYPE html>
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -19,15 +19,13 @@
     <!-- Notificaciones Toast -->
     <div id="toast-container" class="toast-container"></div>
 
-    <!--PANTALLA DE CARGA COMENTADA POR AHORA; QUITAR EN PRODUCCION-->
-    <!--
+    <!-- PANTALLA DE CARGA -->
     <div id="loading-screen" class="screen loading-screen">
         <div class="spinner-container">
             <div class="spinner"></div>
             <p>Cargando Quiniela (<strong style="color: #84c54c">Fase Eliminatoria</strong>)...</p>
         </div>
     </div>
-    -->
     <!-- PANTALLA DASHBOARD TANTO PARA PUBLICO COMO PRIVADO -->
     <div id="dashboard-screen" class="screen dashboard-screen">
         <!-- Barra de Navegación / Header -->
@@ -48,10 +46,7 @@
         </header>
 
         <!-- TITULO DE FONDO -->
-        <h2 id="fase-title" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 5vw; opacity: 0.08; white-space: nowrap; pointer-events: none; z-index: 0; font-weight: 800; letter-spacing: 0.5vw; margin: 0; color: #fff; transition: opacity 0.5s ease;">FASE ELIMINATORIA</h2>
-
-        <!-- ESPACIO PARA ANIMACIÓN (SCROLL HERO) -->
-        <div style="height: 150vh; position: relative;"></div>
+        <h2 id="fase-title" class="fase-background-title">FASE ELIMINATORIA</h2>
 
         <!-- CONTENIDO DE PRONÓSTICOS -->
         <main class="app-main-content" style="position: relative; z-index: 20; padding: 2rem 24px; max-width: 1400px; margin: 0 auto;">
@@ -79,9 +74,9 @@
                                 <span class="team-siglas">MEX</span>
                             </div>
                             <div class="score-inputs-container">
-                                <input type="number" class="score-input" placeholder="-">
+                                <input type="number" name="mx-score" id="mx-score" class="score-input" placeholder="-">
                                 <span class="score-divider">:</span>
-                                <input type="number" class="score-input" placeholder="-">
+                                <input type="number" name="ar-score" id="ar-score" class="score-input" placeholder="-">
                             </div>
                             <div class="team-column">
                                 <div class="flag-wrapper"><img class="flag-img" src="https://flagcdn.com/ar.svg"></div>
@@ -111,9 +106,9 @@
                                 <span class="team-siglas">BRA</span>
                             </div>
                             <div class="score-inputs-container">
-                                <input type="number" class="score-input" placeholder="-">
+                                <input type="number" name="br-score" id="br-score" class="score-input" placeholder="-">
                                 <span class="score-divider">:</span>
-                                <input type="number" class="score-input" placeholder="-">
+                                <input type="number" name="fr-score" id="fr-score" class="score-input" placeholder="-">
                             </div>
                             <div class="team-column">
                                 <div class="flag-wrapper"><img class="flag-img" src="https://flagcdn.com/fr.svg"></div>
@@ -143,9 +138,9 @@
                                 <span class="team-siglas">GER</span>
                             </div>
                             <div class="score-inputs-container">
-                                <input type="number" class="score-input" placeholder="-">
+                                <input type="number" name="de-score" id="de-score" class="score-input" placeholder="-">
                                 <span class="score-divider">:</span>
-                                <input type="number" class="score-input" placeholder="-">
+                                <input type="number" name="it-score" id="it-score" class="score-input" placeholder="-">
                             </div>
                             <div class="team-column">
                                 <div class="flag-wrapper"><img class="flag-img" src="https://flagcdn.com/it.svg"></div>
@@ -165,10 +160,12 @@
         </main>
 
     </div>
+    <!-- Supabase JS Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <!-- Scripts del Proyecto -->
-    <script src="js/config.js"></script>
-    <script src="js/supabase.js"></script>
-    <script src="js/app.js"></script>
+    <script src="../js/config.js"></script>
+    <script src="../js/supabase.js"></script>
+    <script src="../js/app.js"></script>
     <script src="../js/anim.js"></script>
 </body>
 

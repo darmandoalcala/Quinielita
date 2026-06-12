@@ -96,7 +96,18 @@ async function initApp() {
 
         // Cargar y pintar Quiniela (Accesible para todos)
         await loadQuinielaData();
+        
+        // Si existe la promesa de la animación del trofeo, esperamos a que carguen sus imágenes
+        if (window.trophyAnimationLoaded) {
+            const loadingText = document.querySelector("#loading-screen p");
+            if (loadingText) loadingText.innerHTML = `Preparando gráficos 3D...`;
+            await window.trophyAnimationLoaded;
+        }
+        
         showScreen('dashboard-screen');
+        
+        // Forzar un evento de scroll para que anim.js dibuje el primer frame del trofeo instantáneamente
+        window.dispatchEvent(new Event('scroll'));
 
     } catch (err) {
         console.error("Error en inicialización de app:", err);
