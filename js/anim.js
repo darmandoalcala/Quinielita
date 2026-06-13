@@ -71,9 +71,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const pronosticos = document.getElementById('pronosticos-container');
     const title = document.getElementById('fase-title');
     
-    let maxScroll = window.innerHeight * 1.5;
-    let ticking = false;
-    let currentScrollTop = 0;
     let animationTriggered = false;
     
     // Función para dibujar un frame específico basado en el progreso (0 a 1)
@@ -92,14 +89,13 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         
         if (scrollFraction >= 0.8) {
-            // Entre 0.8 y 1.0, se encoge y sube al 20% superior
+            // Entre 0.8 y 1.0, solo se encoge un poco
             const progress = (scrollFraction - 0.8) * 5; // 0 a 1
-            const scale = 1 - (0.8 * progress); // De 1.0 baja a 0.2
-            const translateY = -35 * progress; // Sube hasta -35vh
-            img.style.transform = `translateY(${translateY}vh) scale(${scale})`;
+            const scale = 1 - (0.2 * progress); // De 1.0 baja a 0.8
+            img.style.transform = `scale(${scale})`;
             container.style.opacity = '1';
         } else {
-            img.style.transform = `translateY(0) scale(1)`;
+            img.style.transform = `scale(1)`;
             container.style.opacity = '1';
         }
 
@@ -142,23 +138,30 @@ document.addEventListener("DOMContentLoaded", () => {
             const elapsed = currentTime - startTime;
             let fraction = Math.min(1, elapsed / duration);
             
-            // Efecto ease-in-out para que arranque y frene suavemente
-            const easeFraction = fraction < 0.5 ? 2 * fraction * fraction : 1 - Math.pow(-2 * fraction + 2, 2) / 2;
+            // Easing function: easeOutCubic para que se desacelere al final
+            const easeOutCubic = 1 - Math.pow(1 - fraction, 3);
             
-            renderFrame(easeFraction);
+            renderFrame(easeOutCubic);
             
             if (fraction < 1) {
                 requestAnimationFrame(animate);
             } else {
-                // Al terminar, devolvemos el scroll al usuario
-                document.body.style.overflow = '';
+                document.body.style.overflow = 'auto'; // Restaurar scroll
+                
+                img.style.transform = 'scale(0.8)'; 
+                img.style.maxHeight = '80vh';
+                
+                // Convertirlo a absolute para que se quede "impreso" en el documento
+                // y se scrollee hacia arriba si el usuario baja la página.
+                container.style.position = 'absolute';
+                container.style.top = `${window.scrollY}px`;
+                container.style.height = '100vh';
             }
         };
         
         requestAnimationFrame(animate);
     };
 
-    // Detectar la primera interacción del usuario para detonar la animación
     const handleUserInteraction = (e) => {
         const dashboard = document.getElementById('dashboard-screen');
         if (dashboard && dashboard.classList.contains('hidden')) return;

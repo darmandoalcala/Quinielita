@@ -1,5 +1,6 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,6 +14,7 @@
         rel="stylesheet">
 
     <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/eliminatoria.css">
 </head>
 
 <body>
@@ -28,7 +30,6 @@
     </div>
     <!-- PANTALLA DASHBOARD TANTO PARA PUBLICO COMO PRIVADO -->
     <div id="dashboard-screen" class="screen dashboard-screen">
-        <!-- Barra de Navegación / Header -->
         <header class="app-header">
             <div class="header-logo">
                 <img src="/img/logo.png" alt="Logo Empresa" class="company-logo" style="filter: brightness(100)">
@@ -38,7 +39,6 @@
                 </div>
             </div>
 
-            <!-- Perfil Rápido o Botón de Acceso (Dinámico) -->
             <div class="user-profile-widget" id="header-profile-widget">
                 <!-- Cargando widget... -->
                 <div class="spinner inline-spinner" style="margin: 0;"></div>
@@ -48,114 +48,434 @@
         <!-- TITULO DE FONDO -->
         <h2 id="fase-title" class="fase-background-title">FASE ELIMINATORIA</h2>
 
-        <!-- CONTENIDO DE PRONÓSTICOS -->
-        <main class="app-main-content" style="position: relative; z-index: 20; padding: 2rem 24px; max-width: 1400px; margin: 0 auto;">
-            <section id="pronosticos-container" style="opacity: 0; transform: translateY(20px); transition: all 0.5s ease; padding-bottom: 4rem;">
+        <main class="app-main-content">
+            <section id="pronosticos-container"
+                style="opacity: 0; transform: translateY(20px); transition: all 0.5s ease; padding-bottom: 4rem;">
                 <div class="tab-header-flex">
                     <div class="section-title">
                         <h2>Fase Eliminatoria</h2>
-                        <p class="subtitle" style="color: var(--text-muted); font-size: 0.9rem;">Predicciones de Octavos de Final</p>
+                        <p class="subtitle" style="color: var(--text-muted); font-size: 0.9rem;">Predicciones de Octavos
+                            de Final</p>
                     </div>
                 </div>
 
-                <div class="matches-grid">
-                    <!-- PARTIDO 1 -->
-                    <div class="glass-card match-card pulsing-border">
-                        <div class="match-header-info">
-                            <span class="match-group">Octavos - Llave 1</span>
-                            <span class="match-time">
-                                <i data-lucide="clock" style="width: 12px; height: 12px;"></i> 28 Jun, 10:00
-                            </span>
-                        </div>
-                        <div class="match-versus-area">
-                            <div class="team-column">
-                                <div class="flag-wrapper"><img class="flag-img" src="https://flagcdn.com/mx.svg"></div>
-                                <span class="team-name">México</span>
-                                <span class="team-siglas">MEX</span>
+                            <div class="converging-bracket-wrapper">
+                <div class="converging-bracket">
+                <div class="left-wing">
+                    <div class="bracket-col">
+                        <h3 class="bracket-column-title">16avos</h3>
+                            <div class="bracket-matchup">
+                                <div class="bracket-match">
+                                    <div class="compact-match-card pulsing-border">
+                                        <div class="compact-header">
+                                            <span class="match-group">16avos - L1</span>
+                                            <span class="match-time">12 Jun, 01:00 p.m.</span>
+                                        </div>
+                                        
+                                        <div class="compact-team-row">
+                                            <div class="compact-team-info">
+                                                <div class="flag-wrapper"><div class="flag-img"></div></div>
+                                                <span class="team-name">Por Definir</span>
+                                            </div>
+                                            <input type="number" class="compact-score-input" disabled placeholder="-">
+                                        </div>
+                                        
+                                        <div class="compact-team-row">
+                                            <div class="compact-team-info">
+                                                <div class="flag-wrapper"><div class="flag-img"></div></div>
+                                                <span class="team-name">Por Definir</span>
+                                            </div>
+                                            <input type="number" class="compact-score-input" disabled placeholder="-">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="bracket-match">
+                                    <div class="compact-match-card pulsing-border">
+                                        <div class="compact-header">
+                                            <span class="match-group">16avos - L2</span>
+                                            <span class="match-time">12 Jun, 01:00 p.m.</span>
+                                        </div>
+                                        
+                                        <div class="compact-team-row">
+                                            <div class="compact-team-info">
+                                                <div class="flag-wrapper"><div class="flag-img"></div></div>
+                                                <span class="team-name">Por Definir</span>
+                                            </div>
+                                            <input type="number" class="compact-score-input" disabled placeholder="-">
+                                        </div>
+                                        
+                                        <div class="compact-team-row">
+                                            <div class="compact-team-info">
+                                                <div class="flag-wrapper"><div class="flag-img"></div></div>
+                                                <span class="team-name">Por Definir</span>
+                                            </div>
+                                            <input type="number" class="compact-score-input" disabled placeholder="-">
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="score-inputs-container">
-                                <input type="number" name="mx-score" id="mx-score" class="score-input" placeholder="-">
-                                <span class="score-divider">:</span>
-                                <input type="number" name="ar-score" id="ar-score" class="score-input" placeholder="-">
+                            <div class="bracket-matchup">
+                                <div class="bracket-match">
+                                    <div class="compact-match-card pulsing-border">
+                                        <div class="compact-header">
+                                            <span class="match-group">16avos - L3</span>
+                                            <span class="match-time">12 Jun, 01:00 p.m.</span>
+                                        </div>
+                                        
+                                        <div class="compact-team-row">
+                                            <div class="compact-team-info">
+                                                <div class="flag-wrapper"><div class="flag-img"></div></div>
+                                                <span class="team-name">Por Definir</span>
+                                            </div>
+                                            <input type="number" class="compact-score-input" disabled placeholder="-">
+                                        </div>
+                                        
+                                        <div class="compact-team-row">
+                                            <div class="compact-team-info">
+                                                <div class="flag-wrapper"><div class="flag-img"></div></div>
+                                                <span class="team-name">Por Definir</span>
+                                            </div>
+                                            <input type="number" class="compact-score-input" disabled placeholder="-">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="bracket-match">
+                                    <div class="compact-match-card pulsing-border">
+                                        <div class="compact-header">
+                                            <span class="match-group">16avos - L4</span>
+                                            <span class="match-time">12 Jun, 01:00 p.m.</span>
+                                        </div>
+                                        
+                                        <div class="compact-team-row">
+                                            <div class="compact-team-info">
+                                                <div class="flag-wrapper"><div class="flag-img"></div></div>
+                                                <span class="team-name">Por Definir</span>
+                                            </div>
+                                            <input type="number" class="compact-score-input" disabled placeholder="-">
+                                        </div>
+                                        
+                                        <div class="compact-team-row">
+                                            <div class="compact-team-info">
+                                                <div class="flag-wrapper"><div class="flag-img"></div></div>
+                                                <span class="team-name">Por Definir</span>
+                                            </div>
+                                            <input type="number" class="compact-score-input" disabled placeholder="-">
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="team-column">
-                                <div class="flag-wrapper"><img class="flag-img" src="https://flagcdn.com/ar.svg"></div>
-                                <span class="team-name">Argentina</span>
-                                <span class="team-siglas">ARG</span>
+                            <div class="bracket-matchup">
+                                <div class="bracket-match">
+                                    <div class="compact-match-card pulsing-border">
+                                        <div class="compact-header">
+                                            <span class="match-group">16avos - L5</span>
+                                            <span class="match-time">12 Jun, 01:00 p.m.</span>
+                                        </div>
+                                        
+                                        <div class="compact-team-row">
+                                            <div class="compact-team-info">
+                                                <div class="flag-wrapper"><div class="flag-img"></div></div>
+                                                <span class="team-name">Por Definir</span>
+                                            </div>
+                                            <input type="number" class="compact-score-input" disabled placeholder="-">
+                                        </div>
+                                        
+                                        <div class="compact-team-row">
+                                            <div class="compact-team-info">
+                                                <div class="flag-wrapper"><div class="flag-img"></div></div>
+                                                <span class="team-name">Por Definir</span>
+                                            </div>
+                                            <input type="number" class="compact-score-input" disabled placeholder="-">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="bracket-match">
+                                    <div class="compact-match-card pulsing-border">
+                                        <div class="compact-header">
+                                            <span class="match-group">16avos - L6</span>
+                                            <span class="match-time">12 Jun, 01:00 p.m.</span>
+                                        </div>
+                                        
+                                        <div class="compact-team-row">
+                                            <div class="compact-team-info">
+                                                <div class="flag-wrapper"><div class="flag-img"></div></div>
+                                                <span class="team-name">Por Definir</span>
+                                            </div>
+                                            <input type="number" class="compact-score-input" disabled placeholder="-">
+                                        </div>
+                                        
+                                        <div class="compact-team-row">
+                                            <div class="compact-team-info">
+                                                <div class="flag-wrapper"><div class="flag-img"></div></div>
+                                                <span class="team-name">Por Definir</span>
+                                            </div>
+                                            <input type="number" class="compact-score-input" disabled placeholder="-">
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                        <div class="match-footer">
-                            <button class="save-prediction-btn" style="flex: 1; font-size: 0.8rem; padding: 0.5rem 1rem; border-radius: var(--radius-md); background: var(--secondary); color: #fff; border: none; cursor: pointer; text-align: center;">
-                                Guardar Apuesta
-                            </button>
-                        </div>
+                            <div class="bracket-matchup">
+                                <div class="bracket-match">
+                                    <div class="compact-match-card pulsing-border">
+                                        <div class="compact-header">
+                                            <span class="match-group">16avos - L7</span>
+                                            <span class="match-time">12 Jun, 01:00 p.m.</span>
+                                        </div>
+                                        
+                                        <div class="compact-team-row">
+                                            <div class="compact-team-info">
+                                                <div class="flag-wrapper"><div class="flag-img"></div></div>
+                                                <span class="team-name">Por Definir</span>
+                                            </div>
+                                            <input type="number" class="compact-score-input" disabled placeholder="-">
+                                        </div>
+                                        
+                                        <div class="compact-team-row">
+                                            <div class="compact-team-info">
+                                                <div class="flag-wrapper"><div class="flag-img"></div></div>
+                                                <span class="team-name">Por Definir</span>
+                                            </div>
+                                            <input type="number" class="compact-score-input" disabled placeholder="-">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="bracket-match">
+                                    <div class="compact-match-card pulsing-border">
+                                        <div class="compact-header">
+                                            <span class="match-group">16avos - L8</span>
+                                            <span class="match-time">12 Jun, 01:00 p.m.</span>
+                                        </div>
+                                        
+                                        <div class="compact-team-row">
+                                            <div class="compact-team-info">
+                                                <div class="flag-wrapper"><div class="flag-img"></div></div>
+                                                <span class="team-name">Por Definir</span>
+                                            </div>
+                                            <input type="number" class="compact-score-input" disabled placeholder="-">
+                                        </div>
+                                        
+                                        <div class="compact-team-row">
+                                            <div class="compact-team-info">
+                                                <div class="flag-wrapper"><div class="flag-img"></div></div>
+                                                <span class="team-name">Por Definir</span>
+                                            </div>
+                                            <input type="number" class="compact-score-input" disabled placeholder="-">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                     </div>
-
-                    <!-- PARTIDO 2 -->
-                    <div class="glass-card match-card pulsing-border">
-                        <div class="match-header-info">
-                            <span class="match-group">Octavos - Llave 2</span>
-                            <span class="match-time">
-                                <i data-lucide="clock" style="width: 12px; height: 12px;"></i> 28 Jun, 14:00
-                            </span>
-                        </div>
-                        <div class="match-versus-area">
-                            <div class="team-column">
-                                <div class="flag-wrapper"><img class="flag-img" src="https://flagcdn.com/br.svg"></div>
-                                <span class="team-name">Brasil</span>
-                                <span class="team-siglas">BRA</span>
-                            </div>
-                            <div class="score-inputs-container">
-                                <input type="number" name="br-score" id="br-score" class="score-input" placeholder="-">
-                                <span class="score-divider">:</span>
-                                <input type="number" name="fr-score" id="fr-score" class="score-input" placeholder="-">
-                            </div>
-                            <div class="team-column">
-                                <div class="flag-wrapper"><img class="flag-img" src="https://flagcdn.com/fr.svg"></div>
-                                <span class="team-name">Francia</span>
-                                <span class="team-siglas">FRA</span>
-                            </div>
-                        </div>
-                        <div class="match-footer">
-                            <button class="save-prediction-btn" style="flex: 1; font-size: 0.8rem; padding: 0.5rem 1rem; border-radius: var(--radius-md); background: var(--secondary); color: #fff; border: none; cursor: pointer; text-align: center;">
-                                Guardar Apuesta
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <!-- PARTIDO 3 -->
-                    <div class="glass-card match-card pulsing-border">
-                        <div class="match-header-info">
-                            <span class="match-group">Octavos - Llave 3</span>
-                            <span class="match-time">
-                                <i data-lucide="clock" style="width: 12px; height: 12px;"></i> 29 Jun, 10:00
-                            </span>
-                        </div>
-                        <div class="match-versus-area">
-                            <div class="team-column">
-                                <div class="flag-wrapper"><img class="flag-img" src="https://flagcdn.com/de.svg"></div>
-                                <span class="team-name">Alemania</span>
-                                <span class="team-siglas">GER</span>
-                            </div>
-                            <div class="score-inputs-container">
-                                <input type="number" name="de-score" id="de-score" class="score-input" placeholder="-">
-                                <span class="score-divider">:</span>
-                                <input type="number" name="it-score" id="it-score" class="score-input" placeholder="-">
-                            </div>
-                            <div class="team-column">
-                                <div class="flag-wrapper"><img class="flag-img" src="https://flagcdn.com/it.svg"></div>
-                                <span class="team-name">Italia</span>
-                                <span class="team-siglas">ITA</span>
-                            </div>
-                        </div>
-                        <div class="match-footer">
-                            <button class="save-prediction-btn" style="flex: 1; font-size: 0.8rem; padding: 0.5rem 1rem; border-radius: var(--radius-md); background: var(--secondary); color: #fff; border: none; cursor: pointer; text-align: center;">
-                                Guardar Apuesta
-                            </button>
-                        </div>
-                    </div>
-
                 </div>
+                <div class="center-final" id="center-trophy-container" style="display: flex; align-items: center; justify-content: center; width: 30vw; min-width: 150px; position: relative;">
+                    <!-- El script anim.js inyectara el trofeo aqui -->
+                </div>
+                <div class="right-wing">
+                    <div class="bracket-col">
+                        <h3 class="bracket-column-title">16avos</h3>
+                            <div class="bracket-matchup">
+                                <div class="bracket-match">
+                                    <div class="compact-match-card pulsing-border">
+                                        <div class="compact-header">
+                                            <span class="match-group">16avos - L9</span>
+                                            <span class="match-time">12 Jun, 01:00 p.m.</span>
+                                        </div>
+                                        
+                                        <div class="compact-team-row">
+                                            <div class="compact-team-info">
+                                                <div class="flag-wrapper"><div class="flag-img"></div></div>
+                                                <span class="team-name">Por Definir</span>
+                                            </div>
+                                            <input type="number" class="compact-score-input" disabled placeholder="-">
+                                        </div>
+                                        
+                                        <div class="compact-team-row">
+                                            <div class="compact-team-info">
+                                                <div class="flag-wrapper"><div class="flag-img"></div></div>
+                                                <span class="team-name">Por Definir</span>
+                                            </div>
+                                            <input type="number" class="compact-score-input" disabled placeholder="-">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="bracket-match">
+                                    <div class="compact-match-card pulsing-border">
+                                        <div class="compact-header">
+                                            <span class="match-group">16avos - L10</span>
+                                            <span class="match-time">12 Jun, 01:00 p.m.</span>
+                                        </div>
+                                        
+                                        <div class="compact-team-row">
+                                            <div class="compact-team-info">
+                                                <div class="flag-wrapper"><div class="flag-img"></div></div>
+                                                <span class="team-name">Por Definir</span>
+                                            </div>
+                                            <input type="number" class="compact-score-input" disabled placeholder="-">
+                                        </div>
+                                        
+                                        <div class="compact-team-row">
+                                            <div class="compact-team-info">
+                                                <div class="flag-wrapper"><div class="flag-img"></div></div>
+                                                <span class="team-name">Por Definir</span>
+                                            </div>
+                                            <input type="number" class="compact-score-input" disabled placeholder="-">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="bracket-matchup">
+                                <div class="bracket-match">
+                                    <div class="compact-match-card pulsing-border">
+                                        <div class="compact-header">
+                                            <span class="match-group">16avos - L11</span>
+                                            <span class="match-time">12 Jun, 01:00 p.m.</span>
+                                        </div>
+                                        
+                                        <div class="compact-team-row">
+                                            <div class="compact-team-info">
+                                                <div class="flag-wrapper"><div class="flag-img"></div></div>
+                                                <span class="team-name">Por Definir</span>
+                                            </div>
+                                            <input type="number" class="compact-score-input" disabled placeholder="-">
+                                        </div>
+                                        
+                                        <div class="compact-team-row">
+                                            <div class="compact-team-info">
+                                                <div class="flag-wrapper"><div class="flag-img"></div></div>
+                                                <span class="team-name">Por Definir</span>
+                                            </div>
+                                            <input type="number" class="compact-score-input" disabled placeholder="-">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="bracket-match">
+                                    <div class="compact-match-card pulsing-border">
+                                        <div class="compact-header">
+                                            <span class="match-group">16avos - L12</span>
+                                            <span class="match-time">12 Jun, 01:00 p.m.</span>
+                                        </div>
+                                        
+                                        <div class="compact-team-row">
+                                            <div class="compact-team-info">
+                                                <div class="flag-wrapper"><div class="flag-img"></div></div>
+                                                <span class="team-name">Por Definir</span>
+                                            </div>
+                                            <input type="number" class="compact-score-input" disabled placeholder="-">
+                                        </div>
+                                        
+                                        <div class="compact-team-row">
+                                            <div class="compact-team-info">
+                                                <div class="flag-wrapper"><div class="flag-img"></div></div>
+                                                <span class="team-name">Por Definir</span>
+                                            </div>
+                                            <input type="number" class="compact-score-input" disabled placeholder="-">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="bracket-matchup">
+                                <div class="bracket-match">
+                                    <div class="compact-match-card pulsing-border">
+                                        <div class="compact-header">
+                                            <span class="match-group">16avos - L13</span>
+                                            <span class="match-time">12 Jun, 01:00 p.m.</span>
+                                        </div>
+                                        
+                                        <div class="compact-team-row">
+                                            <div class="compact-team-info">
+                                                <div class="flag-wrapper"><div class="flag-img"></div></div>
+                                                <span class="team-name">Por Definir</span>
+                                            </div>
+                                            <input type="number" class="compact-score-input" disabled placeholder="-">
+                                        </div>
+                                        
+                                        <div class="compact-team-row">
+                                            <div class="compact-team-info">
+                                                <div class="flag-wrapper"><div class="flag-img"></div></div>
+                                                <span class="team-name">Por Definir</span>
+                                            </div>
+                                            <input type="number" class="compact-score-input" disabled placeholder="-">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="bracket-match">
+                                    <div class="compact-match-card pulsing-border">
+                                        <div class="compact-header">
+                                            <span class="match-group">16avos - L14</span>
+                                            <span class="match-time">12 Jun, 01:00 p.m.</span>
+                                        </div>
+                                        
+                                        <div class="compact-team-row">
+                                            <div class="compact-team-info">
+                                                <div class="flag-wrapper"><div class="flag-img"></div></div>
+                                                <span class="team-name">Por Definir</span>
+                                            </div>
+                                            <input type="number" class="compact-score-input" disabled placeholder="-">
+                                        </div>
+                                        
+                                        <div class="compact-team-row">
+                                            <div class="compact-team-info">
+                                                <div class="flag-wrapper"><div class="flag-img"></div></div>
+                                                <span class="team-name">Por Definir</span>
+                                            </div>
+                                            <input type="number" class="compact-score-input" disabled placeholder="-">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="bracket-matchup">
+                                <div class="bracket-match">
+                                    <div class="compact-match-card pulsing-border">
+                                        <div class="compact-header">
+                                            <span class="match-group">16avos - L15</span>
+                                            <span class="match-time">12 Jun, 01:00 p.m.</span>
+                                        </div>
+                                        
+                                        <div class="compact-team-row">
+                                            <div class="compact-team-info">
+                                                <div class="flag-wrapper"><div class="flag-img"></div></div>
+                                                <span class="team-name">Por Definir</span>
+                                            </div>
+                                            <input type="number" class="compact-score-input" disabled placeholder="-">
+                                        </div>
+                                        
+                                        <div class="compact-team-row">
+                                            <div class="compact-team-info">
+                                                <div class="flag-wrapper"><div class="flag-img"></div></div>
+                                                <span class="team-name">Por Definir</span>
+                                            </div>
+                                            <input type="number" class="compact-score-input" disabled placeholder="-">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="bracket-match">
+                                    <div class="compact-match-card pulsing-border">
+                                        <div class="compact-header">
+                                            <span class="match-group">16avos - L16</span>
+                                            <span class="match-time">12 Jun, 01:00 p.m.</span>
+                                        </div>
+                                        
+                                        <div class="compact-team-row">
+                                            <div class="compact-team-info">
+                                                <div class="flag-wrapper"><div class="flag-img"></div></div>
+                                                <span class="team-name">Por Definir</span>
+                                            </div>
+                                            <input type="number" class="compact-score-input" disabled placeholder="-">
+                                        </div>
+                                        
+                                        <div class="compact-team-row">
+                                            <div class="compact-team-info">
+                                                <div class="flag-wrapper"><div class="flag-img"></div></div>
+                                                <span class="team-name">Por Definir</span>
+                                            </div>
+                                            <input type="number" class="compact-score-input" disabled placeholder="-">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                    </div>
+                </div>
+                </div>
+            </div>
             </section>
         </main>
 
@@ -170,3 +490,4 @@
 </body>
 
 </html>
+
