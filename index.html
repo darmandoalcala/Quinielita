@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,23 +9,26 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
-    
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700;800&display=swap"
+        rel="stylesheet">
+
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
-    
+
     <!-- Supabase JS Client -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    
+
     <!-- Estilos del Proyecto -->
     <link rel="stylesheet" href="css/styles.css">
 </head>
+
 <body>
     <!-- Notificaciones Toast -->
     <div id="toast-container" class="toast-container"></div>
 
 
-    <!-- PANTALLA: CARGA / CARGANDO -->
+    <!-- PANTALLA DE CARGA -->
     <div id="loading-screen" class="screen loading-screen">
         <div class="spinner-container">
             <div class="spinner"></div>
@@ -32,7 +36,7 @@
         </div>
     </div>
 
-    <!-- PANTALLA: DASHBOARD PRINCIPAL (PÚBLICO Y PRIVADO) -->
+    <!-- PANTALLA DASHBOARD TANTO PARA PUBLICO COMO PRIVADO -->
     <div id="dashboard-screen" class="screen dashboard-screen">
         <!-- Barra de Navegación / Header -->
         <header class="app-header">
@@ -43,7 +47,7 @@
                     <span>FIFA World Cup 2026</span>
                 </div>
             </div>
-            
+
             <!-- Perfil Rápido o Botón de Acceso (Dinámico) -->
             <div class="user-profile-widget" id="header-profile-widget">
                 <!-- Cargando widget... -->
@@ -65,7 +69,7 @@
 
         <!-- Contenedor Principal de Vistas -->
         <main class="app-main-content">
-            
+
             <!-- TAB 1: QUINIELA / PARTIDOS -->
             <section id="tab-quiniela" class="tab-content active">
                 <div class="tab-header-flex">
@@ -73,7 +77,7 @@
                         <h2>Calendario & Predicciones</h2>
                         <p class="subtitle" id="quiniela-subtitle">Cargando detalles...</p>
                     </div>
-                    
+
                     <!-- Filtros Dinámicos -->
                     <div class="filter-bar">
                         <div class="select-wrapper">
@@ -100,7 +104,8 @@
                                 <option value="ALL">Todo</option>
                                 <option value="Pendiente">Pendientes</option>
                                 <option value="Finalizado">Finalizados</option>
-                                <option value="Apuestas" id="filter-my-predictions" style="display:none;">Mis Pronósticos</option>
+                                <option value="Apuestas" id="filter-my-predictions" style="display:none;">Mis
+                                    Pronósticos</option>
                             </select>
                         </div>
                     </div>
@@ -119,7 +124,8 @@
             <section id="tab-leaderboard" class="tab-content">
                 <div class="section-title">
                     <h2>Tabla de Posiciones</h2>
-                    <p class="subtitle">Clasificación general en tiempo real de todos los participantes. ¡Que gane el mejor estratega!</p>
+                    <p class="subtitle">Clasificación general en tiempo real de todos los participantes. ¡Que gane el
+                        mejor estratega!</p>
                 </div>
 
                 <div class="glass-card leaderboard-container">
@@ -152,8 +158,10 @@
                 <div id="support-tab-anonymous" class="loading-placeholder">
                     <i data-lucide="message-square" style="width: 48px; height: 48px; color: var(--border-card);"></i>
                     <h3 style="margin-top: 1rem; font-family: var(--font-heading);">Soporte Técnico Restringido</h3>
-                    <p style="color:var(--text-muted); max-width: 380px; margin: 0.5rem auto 1.5rem auto; font-size:0.85rem;">
-                        Debes contar con una cuenta activa e iniciar sesión para poder reportar inconvenientes y chatear con nuestros agentes.
+                    <p
+                        style="color:var(--text-muted); max-width: 380px; margin: 0.5rem auto 1.5rem auto; font-size:0.85rem;">
+                        Debes contar con una cuenta activa e iniciar sesión para poder reportar inconvenientes y chatear
+                        con nuestros agentes.
                     </p>
                     <a href="login/index.html" class="btn btn-primary">
                         <span>Iniciar Sesión</span>
@@ -165,7 +173,8 @@
                     <div class="tab-header-flex">
                         <div class="section-title">
                             <h2>Soporte & Asistencia</h2>
-                            <p class="subtitle">¿Tienes alguna duda o problema? Crea un reporte y un agente te responderá a la brevedad.</p>
+                            <p class="subtitle">¿Tienes alguna duda o problema? Crea un reporte y un agente te
+                                responderá a la brevedad.</p>
                         </div>
                         <button class="btn btn-primary" onclick="openNewTicketModal()">
                             <i data-lucide="plus-circle"></i>
@@ -187,9 +196,10 @@
                             <div class="chat-placeholder">
                                 <i data-lucide="message-square" class="placeholder-icon"></i>
                                 <h3>Selecciona un Reporte</h3>
-                                <p>Haz clic en cualquiera de tus reportes de la izquierda para ver el historial e intercambiar mensajes de seguimiento.</p>
+                                <p>Haz clic en cualquiera de tus reportes de la izquierda para ver el historial e
+                                    intercambiar mensajes de seguimiento.</p>
                             </div>
-                            
+
                             <!-- Conversación Activa -->
                             <div id="chat-active-container" class="chat-active-container hidden">
                                 <div class="chat-header">
@@ -201,15 +211,17 @@
                                             <span id="chat-ticket-date" class="date">Hace 2 horas</span>
                                         </div>
                                     </div>
-                                    <button onclick="closeCurrentTicket()" class="btn btn-secondary btn-sm" id="close-ticket-btn">
+                                    <button onclick="closeCurrentTicket()" class="btn btn-secondary btn-sm"
+                                        id="close-ticket-btn">
                                         <i data-lucide="check-circle-2"></i> Cerrar Reporte
                                     </button>
                                 </div>
-                                
+
                                 <div id="chat-messages" class="chat-messages"></div>
-                                
+
                                 <form id="chat-reply-form" class="chat-reply-form">
-                                    <textarea id="chat-reply-input" placeholder="Escribe un mensaje de seguimiento..." required></textarea>
+                                    <textarea id="chat-reply-input" placeholder="Escribe un mensaje de seguimiento..."
+                                        required></textarea>
                                     <button type="submit" class="btn btn-primary btn-icon-only">
                                         <i data-lucide="send"></i>
                                     </button>
@@ -234,7 +246,8 @@
             <form id="new-ticket-form" class="form-group">
                 <div class="input-wrapper">
                     <label for="ticket-title">Título del Inconveniente</label>
-                    <input type="text" id="ticket-title" placeholder="Ej: No puedo actualizar mi pronóstico del partido México vs Argentina" required>
+                    <input type="text" id="ticket-title"
+                        placeholder="Ej: No puedo actualizar mi pronóstico del partido México vs Argentina" required>
                 </div>
                 <div class="input-wrapper">
                     <label for="ticket-category">Categoría</label>
@@ -247,7 +260,9 @@
                 </div>
                 <div class="input-wrapper">
                     <label for="ticket-description">Descripción detallada</label>
-                    <textarea id="ticket-description" rows="5" placeholder="Explica detalladamente qué sucedió para que podamos ayudarte mejor..." required></textarea>
+                    <textarea id="ticket-description" rows="5"
+                        placeholder="Explica detalladamente qué sucedió para que podamos ayudarte mejor..."
+                        required></textarea>
                 </div>
                 <div class="modal-footer">
                     <button type="button" onclick="closeNewTicketModal()" class="btn btn-secondary">Cancelar</button>
@@ -275,7 +290,8 @@
             <div class="modal-body">
                 <p class="details-notice">
                     <i data-lucide="info"></i>
-                    Por seguridad y juego limpio, solo verás las elecciones de partidos que ya comenzaron. Los partidos pendientes aparecen ocultos con un candado.
+                    Por seguridad y juego limpio, solo verás las elecciones de partidos que ya comenzaron. Los partidos
+                    pendientes aparecen ocultos con un candado.
                 </p>
                 <div id="details-predictions-grid" class="details-predictions-grid"></div>
             </div>
@@ -290,4 +306,5 @@
     <script src="js/supabase.js"></script>
     <script src="js/app.js"></script>
 </body>
+
 </html>
