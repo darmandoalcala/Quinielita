@@ -671,9 +671,7 @@ async function savePrediction(matchId) {
             }
             showToast("Apuesta Registrada", "Tu marcador se ha guardado con éxito.", "success");
         }
-        
-        await loadQuinielaData();
-        
+        renderMatches();
     } catch (err) {
         console.error("Error al guardar predicción:", err);
         
