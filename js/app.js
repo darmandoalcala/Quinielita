@@ -7,9 +7,6 @@ const AppState = {
     matches: [],
     predictions: [],
     teams: [],
-    tickets: [],
-    activeTicket: null,
-    activeTicketComments: [],
     leaderboard: [],
     activeTab: 'tab-quiniela',
     currentDate: new Date(), // Sincronizado en tiempo real con el servidor/cliente
@@ -175,17 +172,7 @@ function setupEventListeners() {
         });
     }
 
-    // Crear Incidencia / Ticket
-    const newTicketForm = document.getElementById("new-ticket-form");
-    if (newTicketForm) {
-        newTicketForm.addEventListener("submit", handleNewTicketSubmit);
-    }
 
-    // Responder a Ticket (Chat)
-    const chatReplyForm = document.getElementById("chat-reply-form");
-    if (chatReplyForm) {
-        chatReplyForm.addEventListener("submit", handleChatReplySubmit);
-    }
 }
 
 // ==========================================================================
@@ -222,10 +209,6 @@ function switchTab(tabId) {
         loadQuinielaData();
     } else if (tabId === 'tab-leaderboard') {
         loadLeaderboardData();
-    } else if (tabId === 'tab-tickets') {
-        if (AppState.session) {
-            loadTicketsData();
-        }
     }
 
     if (typeof lucide !== 'undefined') {
@@ -381,7 +364,7 @@ function calculateUserPoints() {
     AppState.predictions.forEach(pred => {
         const match = AppState.matches.find(m => m.id === pred.partido_id);
         if (match && match.goles_local !== null && match.goles_visitante !== null) {
-            points += computePredictionPoints(pred.goles_local, pred.goles_visitante, match.goles_local, match.goles_visitante);
+            points += (pred.puntos_ganados || 0);
         }
     });
 
@@ -389,23 +372,7 @@ function calculateUserPoints() {
     if (ptsIndicator) ptsIndicator.textContent = `${points} pts`;
 }
 
-// Lógica de puntuación
-function computePredictionPoints(predL, predV, realL, realV) {
-    if (predL === null || predV === null || realL === null || realV === null) return 0;
-    
-    if (predL === realL && predV === realV) {
-        return 3;
-    }
-    
-    const predResult = Math.sign(predL - predV);
-    const realResult = Math.sign(realL - realV);
-    
-    if (predResult === realResult) {
-        return 1;
-    }
-    
-    return 0;
-}
+
 
 function renderMatches() {
     const grid = document.getElementById("matches-grid");
@@ -471,7 +438,7 @@ function renderMatches() {
         let realScoreBadge = "";
         
         if (isFinished) {
-            const earned = prediction ? computePredictionPoints(prediction.goles_local, prediction.goles_visitante, match.goles_local, match.goles_visitante) : 0;
+            const earned = prediction ? (prediction.puntos_ganados || 0) : 0;
             
             if (prediction) {
                 if (earned === 3) {
@@ -767,12 +734,7 @@ async function loadLeaderboardData() {
             userPreds.forEach(pred => {
                 const match = AppState.matches.find(m => m.id === pred.partido_id);
                 if (match && match.goles_local !== null && match.goles_visitante !== null) {
-                    totalPoints += computePredictionPoints(
-                        pred.goles_local, 
-                        pred.goles_visitante, 
-                        match.goles_local, 
-                        match.goles_visitante
-                    );
+                    totalPoints += (pred.puntos_ganados || 0);
                 }
             });
             
@@ -907,7 +869,7 @@ async function viewPlayerPredictions(playerUserId) {
                 const hasApuesta = pred !== undefined;
                 
                 if (isFinished && hasApuesta) {
-                    const pts = computePredictionPoints(pred.goles_local, pred.goles_visitante, match.goles_local, match.goles_visitante);
+                    const pts = pred.puntos_ganados || 0;
                     pointsEarnedLabel = pts === 3 ? `<span class="badge badge-gold" style="font-size:0.6rem;">+3 pts (Exacto)</span>` : 
                                         pts === 1 ? `<span class="badge badge-info" style="font-size:0.6rem;">+1 pt (Resultado)</span>` : 
                                                     `<span class="badge badge-danger" style="font-size:0.6rem;">0 pts</span>`;
@@ -959,318 +921,6 @@ async function viewPlayerPredictions(playerUserId) {
 function closeUserDetailsModal() {
     const modal = document.getElementById("user-details-modal");
     if (modal) modal.classList.add("hidden");
-}
-
-// ==========================================================================
-// PESTAÑA 3: SOPORTE TÉCNICO (SISTEMA DE TICKETS Y CHAT)
-// ==========================================================================
-
-async function loadTicketsData() {
-    if (!AppState.session) return;
-    const list = document.getElementById("tickets-list");
-    if (!list) return;
-    
-    list.innerHTML = `<div class="text-center py-4"><div class="spinner inline-spinner"></div> Cargando reportes...</div>`;
-    
-    try {
-        const { data, error } = await window.supabaseClient
-            .from('tickets')
-            .select('*')
-            .order('created_at', { ascending: false });
-            
-        if (error) throw error;
-        
-        AppState.tickets = data || [];
-        
-        renderTicketsList();
-        
-    } catch (err) {
-        console.error("Error al cargar tickets:", err);
-        list.innerHTML = `<p class="empty-state" style="color:var(--danger)">Fallo al conectar con el módulo de soporte.</p>`;
-    }
-}
-
-function renderTicketsList() {
-    const list = document.getElementById("tickets-list");
-    if (!list) return;
-    
-    list.innerHTML = "";
-    
-    if (AppState.tickets.length === 0) {
-        list.innerHTML = `<p class="empty-state">No has registrado ningún reporte de soporte.</p>`;
-        return;
-    }
-    
-    AppState.tickets.forEach(tkt => {
-        const item = document.createElement("button");
-        item.className = `ticket-sidebar-item ${AppState.activeTicket?.id === tkt.id ? 'active' : ''}`;
-        item.onclick = () => selectTicket(tkt.id);
-        
-        const dateStr = new Date(tkt.created_at).toLocaleDateString('es-MX', {
-            month: 'short',
-            day: 'numeric'
-        });
-        
-        let statusBadge = "";
-        if (tkt.estado === "Abierto") statusBadge = `<span class="badge badge-info" style="font-size:0.6rem;">Abierto</span>`;
-        else if (tkt.estado === "En Proceso") statusBadge = `<span class="badge badge-gold" style="font-size:0.6rem;">En Proceso</span>`;
-        else statusBadge = `<span class="badge badge-success" style="font-size:0.6rem;">Cerrado</span>`;
-
-        item.innerHTML = `
-            <div class="ticket-item-header">
-                <span class="ticket-item-id">#ID-${tkt.id}</span>
-                ${statusBadge}
-            </div>
-            <span class="ticket-item-title">${tkt.titulo}</span>
-            <div class="ticket-item-footer">
-                <span>Categoría: ${tkt.categoria}</span>
-                <span>${dateStr}</span>
-            </div>
-        `;
-        
-        list.appendChild(item);
-    });
-}
-
-// Acción: Seleccionar Ticket de la lista y abrir chat
-async function selectTicket(ticketId) {
-    const chatArea = document.getElementById("ticket-chat-area");
-    const activeContainer = document.getElementById("chat-active-container");
-    if (!chatArea || !activeContainer) return;
-    
-    const placeholder = chatArea.querySelector(".chat-placeholder");
-    
-    const ticket = AppState.tickets.find(t => t.id === ticketId);
-    if (!ticket) return;
-    
-    AppState.activeTicket = ticket;
-    
-    chatArea.classList.remove("empty");
-    if (placeholder) placeholder.classList.add("hidden");
-    activeContainer.classList.remove("hidden");
-    
-    renderTicketsList();
-
-    const titleEl = document.getElementById("chat-ticket-title");
-    const idEl = document.getElementById("chat-ticket-id");
-    const statusEl = document.getElementById("chat-ticket-status");
-    const dateEl = document.getElementById("chat-ticket-date");
-
-    if (titleEl) titleEl.textContent = ticket.titulo;
-    if (idEl) idEl.textContent = `#ID-${ticket.id}`;
-    
-    if (statusEl) {
-        statusEl.textContent = ticket.estado;
-        statusEl.className = "badge";
-        if (ticket.estado === "Abierto") statusEl.classList.add("badge-info");
-        else if (ticket.estado === "En Proceso") statusEl.classList.add("badge-gold");
-        else statusEl.classList.add("badge-success");
-    }
-    
-    const dateStr = new Date(ticket.created_at).toLocaleString('es-MX', {
-        month: 'short',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-    });
-    if (dateEl) dateEl.textContent = `Creado: ${dateStr}`;
-
-    const closeBtn = document.getElementById("close-ticket-btn");
-    const replyForm = document.getElementById("chat-reply-form");
-    
-    if (ticket.estado === "Cerrado") {
-        if (closeBtn) closeBtn.classList.add("hidden");
-        if (replyForm) replyForm.classList.add("hidden");
-    } else {
-        if (closeBtn) closeBtn.classList.remove("hidden");
-        if (replyForm) replyForm.classList.remove("hidden");
-    }
-
-    await loadTicketComments(ticket.id);
-    
-    if (typeof lucide !== 'undefined') {
-        lucide.createIcons();
-    }
-}
-
-// Cargar comentarios asociados al ticket activo
-async function loadTicketComments(ticketId) {
-    const commentsBox = document.getElementById("chat-messages");
-    if (!commentsBox) return;
-    commentsBox.innerHTML = `<div class="text-center py-4"><div class="spinner inline-spinner"></div> Cargando conversación...</div>`;
-    
-    try {
-        const { data, error } = await window.supabaseClient
-            .from('comentarios')
-            .select('*')
-            .eq('ticket_id', ticketId)
-            .order('created_at', { ascending: true });
-            
-        if (error) throw error;
-        
-        AppState.activeTicketComments = data || [];
-        
-        commentsBox.innerHTML = "";
-        
-        const mainBubble = document.createElement("div");
-        mainBubble.className = "chat-bubble agent";
-        mainBubble.innerHTML = `
-            <div class="bubble-meta">
-                <span class="bubble-author" style="color:var(--primary-hover)">Mi Reporte Inicial</span>
-                <span>${new Date(AppState.activeTicket.created_at).toLocaleTimeString('es-MX', {hour:'2-digit', minute:'2-digit'})}</span>
-            </div>
-            <div class="bubble-text" style="font-weight:500;">
-                ${AppState.activeTicket.descripcion}
-            </div>
-        `;
-        commentsBox.appendChild(mainBubble);
-
-        AppState.activeTicketComments.forEach(comm => {
-            const isMe = comm.usuario_id === AppState.session.user.id;
-            
-            const alignClass = isMe ? "chat-bubble user" : "chat-bubble agent";
-            const author = isMe ? "Tú" : "Soporte Técnico";
-            
-            const commTime = new Date(comm.created_at).toLocaleTimeString('es-MX', {
-                hour: '2-digit',
-                minute: '2-digit'
-            });
-
-            const bubble = document.createElement("div");
-            bubble.className = alignClass;
-            bubble.innerHTML = `
-                <div class="bubble-meta">
-                    <span class="bubble-author">${author}</span>
-                    <span>${commTime}</span>
-                </div>
-                <div class="bubble-text">
-                    ${comm.comentario || comm.contenido}
-                </div>
-            `;
-            commentsBox.appendChild(bubble);
-        });
-
-        commentsBox.scrollTop = commentsBox.scrollHeight;
-
-    } catch (err) {
-        console.error("Error al traer comentarios del ticket:", err);
-        commentsBox.innerHTML = `<p class="empty-state" style="color:var(--danger)">No se pudieron cargar los mensajes.</p>`;
-    }
-}
-
-// Acción: Enviar nuevo comentario/réplica en el ticket
-async function handleChatReplySubmit(e) {
-    e.preventDefault();
-    const input = document.getElementById("chat-reply-input");
-    if (!input || !AppState.activeTicket) return;
-    const texto = input.value.trim();
-    
-    input.value = "";
-    
-    try {
-        const { data, error } = await window.supabaseClient
-            .from('comentarios')
-            .insert([{
-                ticket_id: AppState.activeTicket.id,
-                usuario_id: AppState.session.user.id,
-                comentario: texto
-            }])
-            .select();
-            
-        if (error) throw error;
-        
-        await loadTicketComments(AppState.activeTicket.id);
-        
-    } catch (err) {
-        console.error("Error al publicar comentario:", err);
-        showToast("Error de Envío", "No se pudo registrar tu comentario.", "error");
-    }
-}
-
-// Acción: Cerrar Ticket desde la vista de chat
-async function closeCurrentTicket() {
-    if (!AppState.activeTicket) return;
-    
-    const confirmClose = confirm("¿Estás seguro de que deseas marcar este reporte como resuelto? Ya no podrás enviar más mensajes.");
-    if (!confirmClose) return;
-    
-    try {
-        const { error } = await window.supabaseClient
-            .from('tickets')
-            .update({ estado: "Cerrado" })
-            .eq('id', AppState.activeTicket.id);
-            
-        if (error) throw error;
-        
-        showToast("Reporte Cerrado", "La incidencia ha sido marcada como resuelta.", "success");
-        
-        AppState.activeTicket.estado = "Cerrado";
-        
-        await loadTicketsData();
-        selectTicket(AppState.activeTicket.id);
-        
-    } catch (err) {
-        console.error("Error al cerrar ticket:", err);
-        showToast("Error de Solicitud", "No se pudo completar la operación. Inténtalo más tarde.", "error");
-    }
-}
-
-// Modales de Creación de Ticket
-function openNewTicketModal() {
-    const modal = document.getElementById("new-ticket-modal");
-    if (modal) modal.classList.remove("hidden");
-    if (typeof lucide !== 'undefined') {
-        lucide.createIcons();
-    }
-}
-
-function closeNewTicketModal() {
-    const modal = document.getElementById("new-ticket-modal");
-    if (modal) modal.classList.add("hidden");
-    
-    const form = document.getElementById("new-ticket-form");
-    if (form) form.reset();
-}
-
-async function handleNewTicketSubmit(e) {
-    e.preventDefault();
-    const titleEl = document.getElementById("ticket-title");
-    const catEl = document.getElementById("ticket-category");
-    const descEl = document.getElementById("ticket-description");
-    if (!titleEl || !catEl || !descEl) return;
-
-    const titulo = titleEl.value.trim();
-    const categoria = catEl.value;
-    const descripcion = descEl.value.trim();
-    
-    closeNewTicketModal();
-    showScreen('loading-screen');
-    
-    try {
-        const { data, error } = await window.supabaseClient
-            .from('tickets')
-            .insert([{
-                usuario_id: AppState.session.user.id,
-                titulo: titulo,
-                categoria: categoria,
-                descripcion: descripcion,
-                estado: "Abierto"
-            }])
-            .select();
-            
-        if (error) throw error;
-        
-        showToast("Reporte Enviado", "Tu reporte ha sido registrado de forma exitosa.", "success");
-        
-        showScreen('dashboard-screen');
-        switchTab('tab-tickets');
-        
-    } catch (err) {
-        console.error("Error al crear ticket:", err);
-        showToast("Fallo al Reportar", "No se pudo completar tu reporte. Inténtalo más tarde.", "error");
-        showScreen('dashboard-screen');
-        switchTab('tab-tickets');
-    }
 }
 
 // ==========================================================================
