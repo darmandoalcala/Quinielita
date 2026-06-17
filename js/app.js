@@ -23,11 +23,11 @@ document.addEventListener("DOMContentLoaded", () => {
 // Inicializar Aplicación (Doble Perfil: Jugador o Espectador Público)
 async function initApp() {
     showScreen('loading-screen');
-    
+
     // 1. Validar Conexión (Inicializada de forma transparente)
     if (!window.supabaseClient) {
         console.error("Credenciales no configuradas. Por favor, abre el archivo js/config.js y coloca tu URL y Anon Key.");
-        
+
         const loadingText = document.querySelector("#loading-screen p");
         if (loadingText) {
             loadingText.innerHTML = `
@@ -42,7 +42,7 @@ async function initApp() {
     try {
         // 2. Comprobar sesión de autenticación activa
         const { data: { session }, error } = await window.supabaseClient.auth.getSession();
-        
+
         if (error) throw error;
 
         const profileWidget = document.getElementById("header-profile-widget");
@@ -53,7 +53,7 @@ async function initApp() {
 
         if (session) {
             AppState.session = session;
-            
+
             // Cargar Perfil de Usuario
             const profileSuccess = await fetchUserProfile(session.user.id);
             if (profileSuccess) {
@@ -74,7 +74,7 @@ async function initApp() {
                         </div>
                     `;
                 }
-                
+
                 // Mostrar controles privados
                 if (myPredsFilter) myPredsFilter.style.display = "block";
                 if (supportAnon) supportAnon.classList.add("hidden");
@@ -93,16 +93,16 @@ async function initApp() {
 
         // Cargar y pintar Quiniela (Accesible para todos)
         await loadQuinielaData();
-        
+
         // Si existe la promesa de la animación del trofeo, esperamos a que carguen sus imágenes
         if (window.trophyAnimationLoaded) {
             const loadingText = document.querySelector("#loading-screen p");
             if (loadingText) loadingText.innerHTML = `Preparando gráficos 3D...`;
             await window.trophyAnimationLoaded;
         }
-        
+
         showScreen('dashboard-screen');
-        
+
         // Forzar un evento de scroll para que anim.js dibuje el primer frame del trofeo instantáneamente
         window.dispatchEvent(new Event('scroll'));
 
@@ -163,7 +163,7 @@ function setupEventListeners() {
             renderMatches();
         });
     }
-    
+
     const statusFilter = document.getElementById("status-filter");
     if (statusFilter) {
         statusFilter.addEventListener("change", () => {
@@ -187,7 +187,7 @@ function showScreen(screenId) {
     if (target) {
         target.classList.remove("hidden");
     }
-    
+
     if (typeof lucide !== 'undefined') {
         lucide.createIcons();
     }
@@ -196,15 +196,15 @@ function showScreen(screenId) {
 function switchTab(tabId) {
     document.querySelectorAll(".nav-tab").forEach(tab => tab.classList.remove("active"));
     document.querySelectorAll(".tab-content").forEach(content => content.classList.remove("active"));
-    
+
     const clickedTab = document.querySelector(`.nav-tab[data-tab="${tabId}"]`);
     if (clickedTab) clickedTab.classList.add("active");
-    
+
     const targetSection = document.getElementById(tabId);
     if (targetSection) targetSection.classList.add("active");
-    
+
     AppState.activeTab = tabId;
-    
+
     if (tabId === 'tab-quiniela') {
         loadQuinielaData();
     } else if (tabId === 'tab-leaderboard') {
@@ -231,9 +231,9 @@ async function fetchUserProfile(userId) {
             .select('*')
             .eq('id', userId)
             .single();
-            
+
         if (error) throw error;
-        
+
         AppState.userProfile = data;
         return true;
     } catch (err) {
@@ -252,7 +252,7 @@ async function handleLogout() {
         AppState.predictions = [];
         AppState.teams = [];
         showToast("Sesión Finalizada", "Has salido del portal de forma segura.", "info");
-        
+
         // Recargar el portal como espectador
         setupAnonymousHeader();
         await loadQuinielaData();
@@ -279,10 +279,10 @@ async function initDashboard() {
 async function loadQuinielaData() {
     const grid = document.getElementById("matches-grid");
     if (!grid) return;
-    
+
     // Resetear paginación al recargar datos completos
     AppState.matchesDisplayed = AppState.matchesPerPage;
-    
+
     try {
         // Cargar equipos
         if (AppState.teams.length === 0) {
@@ -310,9 +310,9 @@ async function loadQuinielaData() {
                 .from('partidos')
                 .select('*')
                 .order('fecha_hora', { ascending: true });
-                
+
             if (flatError) throw flatError;
-            
+
             matchesData = (matchesFlat || []).map(match => {
                 return {
                     ...match,
@@ -332,10 +332,10 @@ async function loadQuinielaData() {
                 .from('predicciones')
                 .select('*')
                 .eq('usuario_id', AppState.session.user.id);
-                
+
             if (predError) throw predError;
             AppState.predictions = predData || [];
-            
+
             calculateUserPoints();
         } else {
             AppState.predictions = [];
@@ -360,7 +360,7 @@ async function loadQuinielaData() {
 // Calcular puntos acumulados de nuestro usuario para pintarlo en el widget de perfil
 function calculateUserPoints() {
     let points = 0;
-    
+
     AppState.predictions.forEach(pred => {
         const match = AppState.matches.find(m => m.id === pred.partido_id);
         if (match && match.goles_local !== null && match.goles_visitante !== null) {
@@ -377,12 +377,12 @@ function calculateUserPoints() {
 function renderMatches() {
     const grid = document.getElementById("matches-grid");
     if (!grid) return;
-    
+
     const groupFilter = document.getElementById("group-filter").value;
     const statusFilter = document.getElementById("status-filter").value;
-    
+
     grid.innerHTML = "";
-    
+
     const filteredMatches = AppState.matches.filter(match => {
         const localGrp = match.equipo_local?.grupo || "";
         const visitGrp = match.equipo_visitante?.grupo || "";
@@ -394,7 +394,7 @@ function renderMatches() {
 
         const isFinished = match.goles_local !== null && match.goles_visitante !== null || match.estado === "Finalizado";
         const hasPrediction = AppState.predictions.some(p => p.partido_id === match.id);
-        
+
         if (statusFilter === "Finalizado" && !isFinished) return false;
         if (statusFilter === "Pendiente" && isFinished) return false;
         if (statusFilter === "Apuestas" && !hasPrediction) return false;
@@ -423,7 +423,7 @@ function renderMatches() {
     visibleMatches.forEach((match, index) => {
         const localTeam = match.equipo_local || { nombre: "Local", siglas: "LOC", codigo_iso: "unknown", grupo: "A" };
         const visitTeam = match.equipo_visitante || { nombre: "Visitante", siglas: "VIS", codigo_iso: "unknown", grupo: "A" };
-        
+
         const prediction = AppState.predictions.find(p => p.partido_id === match.id);
         const predL = prediction ? prediction.goles_local : "";
         const predV = prediction ? prediction.goles_visitante : "";
@@ -431,15 +431,15 @@ function renderMatches() {
         // Bloquear apuestas si el partido ya inició (fecha_hora <= NOW())
         const matchDate = new Date(match.fecha_hora);
         const isLocked = matchDate <= AppState.currentDate;
-        
+
         // Calcular puntos del partido si está finalizado
         const isFinished = match.goles_local !== null && match.goles_visitante !== null;
         let pointsTag = "";
         let realScoreBadge = "";
-        
+
         if (isFinished) {
             const earned = prediction ? (prediction.puntos_ganados || 0) : 0;
-            
+
             if (prediction) {
                 if (earned === 3) {
                     pointsTag = `<div class="points-earned-tag gold">+3 Puntos (Exacto)</div>`;
@@ -563,7 +563,7 @@ function renderMatches() {
                 ` : ''}
             </div>
         `;
-        
+
         grid.appendChild(card);
     });
 
@@ -592,7 +592,7 @@ function renderMatches() {
 function loadMoreMatches() {
     AppState.matchesDisplayed += AppState.matchesPerPage;
     renderMatches();
-    
+
     // Scroll suave hacia los nuevos partidos cargados
     const grid = document.getElementById("matches-grid");
     if (grid) {
@@ -612,32 +612,32 @@ function loadMoreMatches() {
 // Acción: Guardar/Actualizar Predicción
 async function savePrediction(matchId) {
     if (!AppState.session) return;
-    
+
     const glInput = document.getElementById(`score-l-${matchId}`);
     const gvInput = document.getElementById(`score-v-${matchId}`);
     const saveBtn = document.getElementById(`save-btn-${matchId}`);
     if (!glInput || !gvInput || !saveBtn) return;
-    
+
     const golesLocal = parseInt(glInput.value);
     const golesVisitante = parseInt(gvInput.value);
-    
+
     if (isNaN(golesLocal) || isNaN(golesVisitante)) {
         showToast("Marcador Incompleto", "Ingresa ambos marcadores para guardar tu pronóstico.", "error");
         return;
     }
-    
+
     saveBtn.disabled = true;
     saveBtn.innerHTML = `<span class="spinner inline-spinner" style="margin:0;"></span>`;
-    
+
     try {
         const match = AppState.matches.find(m => m.id === matchId);
-        
+
         if (new Date(match.fecha_hora) <= AppState.currentDate) {
             throw new Error("El candado se ha cerrado. El partido ya ha comenzado.");
         }
 
         const existingPred = AppState.predictions.find(p => p.partido_id === matchId);
-        
+
         if (existingPred) {
             const { data, error } = await window.supabaseClient
                 .from('predicciones')
@@ -647,9 +647,9 @@ async function savePrediction(matchId) {
                 })
                 .eq('id', existingPred.id)
                 .select();
-                
+
             if (error) throw error;
-            
+
             existingPred.goles_local = golesLocal;
             existingPred.goles_visitante = golesVisitante;
             showToast("Pronóstico Actualizado", "Tu marcador ha sido actualizado con éxito.", "success");
@@ -663,9 +663,9 @@ async function savePrediction(matchId) {
                     goles_visitante: golesVisitante
                 }])
                 .select();
-                
+
             if (error) throw error;
-            
+
             if (data && data.length > 0) {
                 AppState.predictions.push(data[0]);
             }
@@ -674,18 +674,18 @@ async function savePrediction(matchId) {
         renderMatches();
     } catch (err) {
         console.error("Error al guardar predicción:", err);
-        
-        const isClosedError = err.message?.includes("row-level security policy") || 
-                              err.message?.includes("new row violates row-level security") ||
-                              err.message?.includes("candado") ||
-                              err.message?.includes("comenzado");
-                           
+
+        const isClosedError = err.message?.includes("row-level security policy") ||
+            err.message?.includes("new row violates row-level security") ||
+            err.message?.includes("candado") ||
+            err.message?.includes("comenzado");
+
         if (isClosedError) {
             showToast("¡Tiempo Límite Expirado!", "Este partido ya ha comenzado en el servidor y las apuestas están cerradas.", "error");
         } else {
             showToast("Error al Guardar", "No se pudo guardar el pronóstico. Inténtalo de nuevo.", "error");
         }
-        
+
         loadQuinielaData();
     } finally {
         if (saveBtn) saveBtn.disabled = false;
@@ -699,7 +699,7 @@ async function savePrediction(matchId) {
 async function loadLeaderboardData() {
     const tbody = document.getElementById("leaderboard-body");
     if (!tbody) return;
-    
+
     tbody.innerHTML = `
         <tr>
             <td colspan="5" class="text-center py-4">
@@ -707,56 +707,76 @@ async function loadLeaderboardData() {
             </td>
         </tr>
     `;
-    
+
     try {
         const { data: usersData, error: usersError } = await window.supabaseClient
             .from('usuarios')
             .select('*');
-            
+
         if (usersError) throw usersError;
 
         const { data: allPredictions, error: predError } = await window.supabaseClient
             .from('predicciones')
             .select('*');
-            
+
         if (predError) throw predError;
 
         if (AppState.matches.length === 0) {
             await loadQuinielaData();
         }
 
+        const finishedMatches = AppState.matches.filter(m => m.goles_local !== null && m.goles_visitante !== null);
+        // Ordenar del más reciente al más viejo, usando fecha_hora y luego el ID de la base de datos
+        finishedMatches.sort((a, b) => {
+            const timeDiff = new Date(b.fecha_hora) - new Date(a.fecha_hora);
+            if (timeDiff !== 0) return timeDiff;
+            return b.id - a.id;
+        });
+        const lastMatch = finishedMatches.length > 0 ? finishedMatches[0] : null;
+        if (lastMatch) {
+            console.log("El sistema detectó como ÚLTIMO PARTIDO a:", lastMatch.equipo_local_id, "vs", lastMatch.equipo_visitante_id, "ID:", lastMatch.id);
+        }
+
         const leaderboard = usersData.map(user => {
             let totalPoints = 0;
+            let lastMatchPoints = 0;
             const userPreds = allPredictions.filter(p => p.usuario_id === user.id);
-            
+
             userPreds.forEach(pred => {
                 const match = AppState.matches.find(m => m.id === pred.partido_id);
                 if (match && match.goles_local !== null && match.goles_visitante !== null) {
                     totalPoints += (pred.puntos_ganados || 0);
                 }
             });
-            
+            if (lastMatch) {
+                const lastPred = userPreds.find(p => p.partido_id === lastMatch.id);
+                if (lastPred) {
+                    lastMatchPoints = lastPred.puntos_ganados || 0;
+                }
+            }
+
             return {
                 ...user,
                 points: totalPoints,
+                lastMatchPoints: lastMatchPoints,
                 predictionsCount: userPreds.length
             };
         });
 
         leaderboard.sort((a, b) => b.points - a.points || a.nombre_completo.localeCompare(b.nombre_completo));
-        
+
         AppState.leaderboard = leaderboard;
 
         tbody.innerHTML = "";
-        
+
         leaderboard.forEach((player, index) => {
             const rank = index + 1;
             let rankClass = "";
-            
+
             if (rank === 1) rankClass = "rank-gold";
             else if (rank === 2) rankClass = "rank-silver";
             else if (rank === 3) rankClass = "rank-bronze";
-            
+
             const isMe = AppState.session ? player.id === AppState.session.user.id : false;
 
             const tr = document.createElement("tr");
@@ -767,12 +787,15 @@ async function loadLeaderboardData() {
                 <td>
                     <span class="participant-name">${player.nombre_completo}</span>
                     ${isMe ? '<span class="participant-you-tag">Tú</span>' : ''}
+                    ${player.lastMatchPoints === 3 ? `<span style="color: var(--primary); font-size: 0.8rem; margin-left: 4px; font-weight: normal;">+3</span>` : ''}
+                    ${player.lastMatchPoints === 1 ? `<span style="color: var(--tertiary); font-size: 0.8rem; margin-left: 4px; font-weight: normal;">+1</span>` : ''}
+                    ${player.lastMatchPoints === 0 ? `<span style="color: var(--danger); font-size: 0.8rem; margin-left: 4px; font-weight: normal;">+0</span>` : ''}
                 </td>
                 <td class="participant-subtext">
                     ${player.correo}
                 </td>
-                <td style="text-align: center;">
-                    <span class="pts-col-val">${player.points}</span>
+                <td style="text-align: center; vertical-align: middle;">
+                    <span class="pts-col-val" style="display: inline-block;">${player.points}</span>
                 </td>
                 <td style="text-align: center;">
                     <button class="btn-view-predictions" onclick="viewPlayerPredictions('${player.id}')">
@@ -809,14 +832,14 @@ async function viewPlayerPredictions(playerUserId) {
     const info = document.getElementById("details-user-info");
     const container = document.getElementById("details-predictions-grid");
     if (!modal || !container) return;
-    
+
     container.innerHTML = `<div class="loading-placeholder"><div class="spinner"></div> Cargando pronósticos del competidor...</div>`;
     modal.classList.remove("hidden");
-    
+
     try {
         const player = AppState.leaderboard.find(u => u.id === playerUserId);
         if (!player) throw new Error("Usuario no encontrado en cache.");
-        
+
         title.textContent = `Apuestas de ${player.nombre_completo}`;
         info.textContent = `ID Oculto: ${player.rfc.substring(0, 4)}******${player.rfc.substring(10)} | ${player.points} Puntos Totales`;
 
@@ -826,7 +849,7 @@ async function viewPlayerPredictions(playerUserId) {
             .from('predicciones')
             .select('*')
             .eq('usuario_id', playerUserId);
-            
+
         if (error) throw error;
 
         container.innerHTML = "";
@@ -834,13 +857,13 @@ async function viewPlayerPredictions(playerUserId) {
         AppState.matches.forEach(match => {
             const localTeam = match.equipo_local || { nombre: "Local", siglas: "LOC", codigo_iso: "unknown" };
             const visitTeam = match.equipo_visitante || { nombre: "Visitante", siglas: "VIS", codigo_iso: "unknown" };
-            
+
             const matchDate = new Date(match.fecha_hora);
             const isStarted = matchDate <= AppState.currentDate;
             const isFinished = match.goles_local !== null && match.goles_visitante !== null;
-            
+
             const pred = rawPreds.find(p => p.partido_id === match.id);
-            
+
             let cardBody = "";
             let pointsEarnedLabel = "";
 
@@ -865,12 +888,12 @@ async function viewPlayerPredictions(playerUserId) {
                 const gl = pred ? pred.goles_local : "-";
                 const gv = pred ? pred.goles_visitante : "-";
                 const hasApuesta = pred !== undefined;
-                
+
                 if (isFinished && hasApuesta) {
                     const pts = pred.puntos_ganados || 0;
-                    pointsEarnedLabel = pts === 3 ? `<span class="badge badge-gold" style="font-size:0.6rem;">+3 pts (Exacto)</span>` : 
-                                        pts === 1 ? `<span class="badge badge-info" style="font-size:0.6rem;">+1 pt (Resultado)</span>` : 
-                                                    `<span class="badge badge-danger" style="font-size:0.6rem;">0 pts</span>`;
+                    pointsEarnedLabel = pts === 3 ? `<span class="badge badge-gold" style="font-size:0.6rem;">+3 pts (Exacto)</span>` :
+                        pts === 1 ? `<span class="badge badge-info" style="font-size:0.6rem;">+1 pt (Resultado)</span>` :
+                            `<span class="badge badge-danger" style="font-size:0.6rem;">0 pts</span>`;
                 } else if (isFinished && !hasApuesta) {
                     pointsEarnedLabel = `<span class="badge" style="font-size:0.6rem;">Sin pronóstico</span>`;
                 }
@@ -928,14 +951,14 @@ function closeUserDetailsModal() {
 function showToast(title, message, type = "info") {
     const container = document.getElementById("toast-container");
     if (!container) return;
-    
+
     const toast = document.createElement("div");
     toast.className = `toast ${type}`;
-    
+
     let iconName = "info";
     if (type === "success") iconName = "check-circle";
     else if (type === "error") iconName = "alert-circle";
-    
+
     toast.innerHTML = `
         <i data-lucide="${iconName}"></i>
         <div class="toast-content">
@@ -946,17 +969,17 @@ function showToast(title, message, type = "info") {
             <i data-lucide="x" style="width:12px; height:12px;"></i>
         </button>
     `;
-    
+
     container.appendChild(toast);
-    
+
     if (typeof lucide !== 'undefined') {
         lucide.createIcons();
     }
-    
+
     setTimeout(() => {
         toast.classList.add("show");
     }, 10);
-    
+
     setTimeout(() => {
         toast.classList.remove("show");
         setTimeout(() => {
