@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", () => {
     setupEventListeners();
 });
 
-// Inicializar Aplicación (Doble Perfil: Jugador o Espectador Público)
+// Inicializar Aplicación --- doble perfil
 async function initApp() {
     showScreen('loading-screen');
 
@@ -115,7 +115,7 @@ async function initApp() {
     }
 }
 
-// Configura el encabezado en modo espectador (sin login)
+// Configura el encabezado en modo espectador
 function setupAnonymousHeader() {
     const profileWidget = document.getElementById("header-profile-widget");
     const myPredsFilter = document.getElementById("filter-my-predictions");
@@ -144,7 +144,7 @@ function setupAnonymousHeader() {
     }
 }
 
-// Configurar Manejadores de Eventos del DOM (Defensivo frente a elementos ausentes)
+// Configurar Manejadores de Eventos del DOM
 function setupEventListeners() {
     // Navegación de Pestañas (Tab Navigation)
     const tabs = document.querySelectorAll(".nav-tab");
@@ -177,7 +177,6 @@ function setupEventListeners() {
 
 // ==========================================================================
 // SECCIÓN: RUTEO Y PANTALLAS (SPA ROUTING)
-// ==========================================================================
 
 function showScreen(screenId) {
     document.querySelectorAll(".screen").forEach(screen => {
@@ -222,7 +221,6 @@ function switchAuthTab(tab) {
 
 // ==========================================================================
 // SECCIÓN: AUTENTICACIÓN (LOGIN / REGISTRO)
-// ==========================================================================
 
 async function fetchUserProfile(userId) {
     try {
@@ -264,18 +262,14 @@ async function handleLogout() {
     }
 }
 
-// ==========================================================================
-// SECCIÓN: INICIALIZAR EL PORTAL (DASHBOARD)
-// ==========================================================================
 
+//Inicializar dashboard
 async function initDashboard() {
     switchTab('tab-quiniela');
 }
 
-// ==========================================================================
-// PESTAÑA 1: QUINIELA (TABLERO DE PARTIDOS Y PRONÓSTICOS)
-// ==========================================================================
 
+//cargar quiniela
 async function loadQuinielaData() {
     const grid = document.getElementById("matches-grid");
     if (!grid) return;
@@ -293,7 +287,7 @@ async function loadQuinielaData() {
             AppState.teams = teamsData || [];
         }
 
-        // Cargar partidos
+        // Cargar partidos (Solo de Fase de Grupos)
         let matchesData = [];
         const { data: dataTry1, error: errTry1 } = await window.supabaseClient
             .from('partidos')
@@ -302,6 +296,7 @@ async function loadQuinielaData() {
                 equipo_local:equipos!equipo_local_id(*),
                 equipo_visitante:equipos!equipo_visitante_id(*)
             `)
+            .or('fase.eq."Fase de Grupos",fase.is.null') // Solo trae Fase de Grupos (o los que no tienen fase asignada)
             .order('fecha_hora', { ascending: true });
 
         if (errTry1) {
@@ -309,6 +304,7 @@ async function loadQuinielaData() {
             const { data: matchesFlat, error: flatError } = await window.supabaseClient
                 .from('partidos')
                 .select('*')
+                .or('fase.eq."Fase de Grupos",fase.is.null')
                 .order('fecha_hora', { ascending: true });
 
             if (flatError) throw flatError;
@@ -357,7 +353,7 @@ async function loadQuinielaData() {
     }
 }
 
-// Calcular puntos acumulados de nuestro usuario para pintarlo en el widget de perfil
+// Calcular puntos propios para widget
 function calculateUserPoints() {
     let points = 0;
 
@@ -373,7 +369,7 @@ function calculateUserPoints() {
 }
 
 
-
+//renderiza partidos
 function renderMatches() {
     const grid = document.getElementById("matches-grid");
     if (!grid) return;
@@ -588,7 +584,7 @@ function renderMatches() {
     }
 }
 
-// Acción: Cargar más partidos (carga dinámica)
+// Carga dinamica de los demás partidos
 function loadMoreMatches() {
     AppState.matchesDisplayed += AppState.matchesPerPage;
     renderMatches();
@@ -609,7 +605,7 @@ function loadMoreMatches() {
     }
 }
 
-// Acción: Guardar/Actualizar Predicción
+// Guardar predicción
 async function savePrediction(matchId) {
     if (!AppState.session) return;
 
@@ -692,10 +688,7 @@ async function savePrediction(matchId) {
     }
 }
 
-// ==========================================================================
-// PESTAÑA 2: LEADERBOARD SEGURO (CLASIFICACIÓN GENERAL Y DETALLES)
-// ==========================================================================
-
+//Cargar tabla de clasificación
 async function loadLeaderboardData() {
     const tbody = document.getElementById("leaderboard-body");
     if (!tbody) return;
@@ -828,7 +821,7 @@ async function loadLeaderboardData() {
     }
 }
 
-// Acción: Ver apuestas de otro usuario
+// Ver predicciones (de otros)
 async function viewPlayerPredictions(playerUserId) {
     const modal = document.getElementById("user-details-modal");
     const title = document.getElementById("details-user-name");
@@ -942,15 +935,14 @@ async function viewPlayerPredictions(playerUserId) {
     }
 }
 
+// Cerrar modal
 function closeUserDetailsModal() {
     const modal = document.getElementById("user-details-modal");
     if (modal) modal.classList.add("hidden");
 }
 
-// ==========================================================================
-// SECCIÓN: NOTIFICACIONES DEL SISTEMA (TOASTS)
-// ==========================================================================
 
+//Notificaciones del sistema
 function showToast(title, message, type = "info") {
     const container = document.getElementById("toast-container");
     if (!container) return;
