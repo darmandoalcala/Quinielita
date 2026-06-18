@@ -709,18 +709,7 @@ async function loadLeaderboardData() {
     `;
 
     try {
-        const { data: usersData, error: usersError } = await window.supabaseClient
-            .from('usuarios')
-            .select('*');
-
-        if (usersError) throw usersError;
-
-        const { data: allPredictions, error: predError } = await window.supabaseClient
-            .from('predicciones')
-            .select('*');
-
-        if (predError) throw predError;
-
+        // 1. Asegurar que haya partidos cargados (para calcular lastMatch)
         if (AppState.matches.length === 0) {
             await loadQuinielaData();
         }
@@ -737,29 +726,43 @@ async function loadLeaderboardData() {
             console.log("El sistema detectó como ÚLTIMO PARTIDO a:", lastMatch.equipo_local_id, "vs", lastMatch.equipo_visitante_id, "ID:", lastMatch.id);
         }
 
-        const leaderboard = usersData.map(user => {
-            let totalPoints = 0;
-            let lastMatchPoints = 0;
-            const userPreds = allPredictions.filter(p => p.usuario_id === user.id);
+        // 2. Descargar el leaderboard consolidado desde nuestra vista optimizada
+        const { data: leaderboardData, error: viewError } = await window.supabaseClient
+            .from('leaderboard_view')
+            .select('*');
+            
+        if (viewError) throw viewError;
 
-            userPreds.forEach(pred => {
-                const match = AppState.matches.find(m => m.id === pred.partido_id);
-                if (match && match.goles_local !== null && match.goles_visitante !== null) {
-                    totalPoints += (pred.puntos_ganados || 0);
-                }
-            });
+        // 3. Descargar SÓLO las predicciones del último partido (muy ligero)
+        let lastMatchPreds = [];
+        if (lastMatch) {
+            const { data: predsData, error: predError } = await window.supabaseClient
+                .from('predicciones')
+                .select('usuario_id, puntos_ganados')
+                .eq('partido_id', lastMatch.id);
+                
+            if (!predError && predsData) {
+                lastMatchPreds = predsData;
+            }
+        }
+
+        const leaderboard = leaderboardData.map(user => {
+            let lastMatchPoints = 0;
             if (lastMatch) {
-                const lastPred = userPreds.find(p => p.partido_id === lastMatch.id);
+                const lastPred = lastMatchPreds.find(p => p.usuario_id === user.id);
                 if (lastPred) {
                     lastMatchPoints = lastPred.puntos_ganados || 0;
                 }
             }
 
             return {
-                ...user,
-                points: totalPoints,
+                id: user.id,
+                nombre_completo: user.nombre_completo,
+                correo: user.correo,
+                rfc: user.rfc,
+                points: parseInt(user.points) || 0,
                 lastMatchPoints: lastMatchPoints,
-                predictionsCount: userPreds.length
+                predictionsCount: parseInt(user.predictions_count) || 0
             };
         });
 
@@ -841,7 +844,7 @@ async function viewPlayerPredictions(playerUserId) {
         if (!player) throw new Error("Usuario no encontrado en cache.");
 
         title.textContent = `Apuestas de ${player.nombre_completo}`;
-        info.textContent = `ID Oculto: ${player.rfc.substring(0, 4)}******${player.rfc.substring(10)} | ${player.points} Puntos Totales`;
+        info.textContent = `ID Oculto: ${player.rfc.substring(0, 4)}****** | ${player.points} Puntos Totales`;
 
         const isMe = AppState.session ? playerUserId === AppState.session.user.id : false;
 
@@ -895,7 +898,7 @@ async function viewPlayerPredictions(playerUserId) {
                         pts === 1 ? `<span class="badge badge-info" style="font-size:0.6rem;">+1 pt (Resultado)</span>` :
                             `<span class="badge badge-danger" style="font-size:0.6rem;">0 pts</span>`;
                 } else if (isFinished && !hasApuesta) {
-                    pointsEarnedLabel = `<span class="badge" style="font-size:0.6rem;">Sin pronóstico</span>`;
+                    pointsEarnedLabel = `<span class="badge badge-danger" style="font-size:0.6rem;">0 pts</span>`;
                 }
 
                 cardBody = `
