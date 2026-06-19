@@ -151,8 +151,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 img.style.transform = 'scale(0.8)'; 
                 img.style.maxHeight = '80vh';
                 
-                // Convertirlo a absolute para que se quede "impreso" en el documento
-                // y se scrollee hacia arriba si el usuario baja la página.
+                //Se convierte en absolute para que el objeto se quede fijo en una posición de la pantalla
                 container.style.position = 'absolute';
                 container.style.top = `${window.scrollY}px`;
                 container.style.height = '100vh';
