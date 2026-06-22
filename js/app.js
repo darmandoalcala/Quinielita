@@ -356,12 +356,10 @@ async function loadQuinielaData() {
 // Calcular puntos propios para widget
 function calculateUserPoints() {
     let points = 0;
-
+    // Sumamos directamente los puntos_ganados de todas las predicciones del usuario.
+    // Esto asegura que cuenten los puntos de TODAS las fases (Grupos, 16avos, etc).
     AppState.predictions.forEach(pred => {
-        const match = AppState.matches.find(m => m.id === pred.partido_id);
-        if (match && match.goles_local !== null && match.goles_visitante !== null) {
-            points += (pred.puntos_ganados || 0);
-        }
+        points += (pred.puntos_ganados || 0);
     });
 
     const ptsIndicator = document.getElementById("user-points");
@@ -829,7 +827,7 @@ async function viewPlayerPredictions(playerUserId) {
     const container = document.getElementById("details-predictions-grid");
     if (!modal || !container) return;
 
-    container.innerHTML = `<div class="loading-placeholder"><div class="spinner"></div> Cargando pronósticos del competidor...</div>`;
+    container.innerHTML = `<div class="loading-placeholder"><img src="img/worldcup_trophy/0001.webp" class="trophy-spinner" alt="Cargando..." style="width: 40px;"> Cargando pronósticos del competidor...</div>`;
     modal.classList.remove("hidden");
 
     try {

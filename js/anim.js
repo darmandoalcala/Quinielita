@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", () => {
     container.style.width = '100%';
     container.style.height = '100%';
     container.style.pointerEvents = 'none';
-    container.style.zIndex = '10';
+    container.style.zIndex = '-1';
     container.style.display = 'flex';
     container.style.alignItems = 'center';
     container.style.justifyContent = 'center';
@@ -68,8 +68,20 @@ document.addEventListener("DOMContentLoaded", () => {
         images.push(imgObj);
     }
     
-    const pronosticos = document.getElementById('pronosticos-container');
+    const header = document.querySelector('.app-header');
+    const tabsNav = document.querySelector('.app-tabs-nav');
+    const mainContent = document.querySelector('.app-main-content');
     const title = document.getElementById('fase-title');
+    
+    [header, tabsNav, mainContent].forEach(el => {
+        if (el) {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'all 0.5s ease';
+            el.style.position = 'relative';
+            el.style.zIndex = '10';
+        }
+    });
     
     let animationTriggered = false;
     
@@ -89,24 +101,33 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         
         if (scrollFraction >= 0.8) {
-            // Entre 0.8 y 1.0, solo se encoge un poco
+            // Entre 0.8 y 1.0, se encoge un poco y se oscurece un 30%
             const progress = (scrollFraction - 0.8) * 5; // 0 a 1
             const scale = 1 - (0.2 * progress); // De 1.0 baja a 0.8
+            const brightness = 1 - (0.3 * progress); // De 1.0 baja a 0.7 (30% oscuro)
             img.style.transform = `scale(${scale})`;
+            img.style.filter = `drop-shadow(0 0 20px rgba(110, 230, 106, 0.12)) brightness(${brightness})`;
             container.style.opacity = '1';
         } else {
             img.style.transform = `scale(1)`;
+            img.style.filter = `drop-shadow(0 0 20px rgba(110, 230, 106, 0.12)) brightness(1)`;
             container.style.opacity = '1';
         }
 
-        if (pronosticos) {
-            if (scrollFraction >= 0.9) {
-                pronosticos.style.opacity = '1';
-                pronosticos.style.transform = 'translateY(0)';
-            } else {
-                pronosticos.style.opacity = '0';
-                pronosticos.style.transform = 'translateY(20px)';
-            }
+        if (scrollFraction >= 0.9) {
+            [header, tabsNav, mainContent].forEach(el => {
+                if (el) {
+                    el.style.opacity = '1';
+                    el.style.transform = 'translateY(0)';
+                }
+            });
+        } else {
+            [header, tabsNav, mainContent].forEach(el => {
+                if (el) {
+                    el.style.opacity = '0';
+                    el.style.transform = 'translateY(20px)';
+                }
+            });
         }
         
         // Desaparecer el texto de fondo a partir del frame 7 (índice 6)
@@ -149,12 +170,20 @@ document.addEventListener("DOMContentLoaded", () => {
                 document.body.style.overflow = 'auto'; // Restaurar scroll
                 
                 img.style.transform = 'scale(0.8)'; 
+                img.style.filter = 'drop-shadow(0 0 20px rgba(110, 230, 106, 0.12)) brightness(0.7)';
                 img.style.maxHeight = '80vh';
                 
-                //Se convierte en absolute para que el objeto se quede fijo en una posición de la pantalla
-                container.style.position = 'absolute';
-                container.style.top = `${window.scrollY}px`;
-                container.style.height = '100vh';
+                // Para la eliminatoria, lo mantenemos fijo como un fondo
+                if (isSubdir) {
+                    container.style.position = 'fixed';
+                    container.style.top = '0px';
+                    container.style.zIndex = '-1';
+                } else {
+                    // En el index normal, se convierte en absolute para escrollear
+                    container.style.position = 'absolute';
+                    container.style.top = `${window.scrollY}px`;
+                    container.style.height = '100vh';
+                }
             }
         };
         
