@@ -256,7 +256,7 @@
 }
 
 /* --- CONNECTORS CSS --- */
-.left-wing .bracket-col:not(:first-child) .bracket-match .compact-match-card::before {
+.left-wing .bracket-col:not(:first-child) .bracket-match .match-card::before {
     content: '';
     position: absolute;
     left: -20px;
@@ -292,7 +292,7 @@
 }
 
 /* Right Wing Flow (Right to Left) */
-.right-wing .bracket-col:not(:first-child) .bracket-match .compact-match-card::after {
+.right-wing .bracket-col:not(:first-child) .bracket-match .match-card::after {
     content: '';
     position: absolute;
     right: -20px;
@@ -328,7 +328,7 @@
 }
 
 /* Center Final Connectors */
-.center-final .bracket-match .compact-match-card::before {
+.center-final .bracket-match .match-card::before {
     content: '';
     position: absolute;
     left: -20px;
@@ -338,7 +338,7 @@
     z-index: 0;
 }
 
-.center-final .bracket-match .compact-match-card::after {
+.center-final .bracket-match .match-card::after {
     content: '';
     position: absolute;
     right: -20px;

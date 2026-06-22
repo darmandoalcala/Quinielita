@@ -316,114 +316,7 @@ function renderMatches() {
     const remaining = filteredMatches.length - AppState.matchesDisplayed;
 
     visibleMatches.forEach((match, index) => {
-        const localTeam = match.equipo_local || { nombre: "Local", siglas: "LOC", codigo_iso: "unknown", grupo: "A" };
-        const visitTeam = match.equipo_visitante || { nombre: "Visitante", siglas: "VIS", codigo_iso: "unknown", grupo: "A" };
-
-        const prediction = AppState.predictions.find(p => p.partido_id === match.id);
-        const predL = prediction ? prediction.goles_local : "";
-        const predV = prediction ? prediction.goles_visitante : "";
-
-        const matchDate = new Date(match.fecha_hora);
-        const isLocked = matchDate <= AppState.currentDate;
-        const isFinished = match.goles_local !== null && match.goles_visitante !== null;
-        let pointsTag = "";
-        let realScoreBadge = "";
-
-        if (isFinished) {
-            const earned = prediction ? (prediction.puntos_ganados || 0) : 0;
-            if (prediction) {
-                if (earned === 3) pointsTag = `<div class="points-earned-tag gold">+3 Puntos (Exacto)</div>`;
-                else if (earned === 1) pointsTag = `<div class="points-earned-tag" style="background: #475569; color: white;">+1 Punto (Resultado)</div>`;
-                else pointsTag = `<div class="points-earned-tag" style="background: var(--danger); color: white;">0 Puntos</div>`;
-            } else {
-                pointsTag = `<div class="points-earned-tag" style="background: rgba(255, 255, 255, 0.05); color: var(--text-muted); border: 1px solid var(--border-card);">Sin Apuesta</div>`;
-            }
-
-            realScoreBadge = `
-                <div class="real-score-badge">
-                    <span class="subtitle" style="display:block; font-size:0.6rem;">Resultado Real</span>
-                    <span class="real-score-val">${match.goles_local} - ${match.goles_visitante}</span>
-                </div>
-            `;
-        }
-
-        const flagLocal = localTeam.codigo_iso !== "unknown" ? `https://flagcdn.com/${localTeam.codigo_iso}.svg` : "https://flagcdn.com/un.svg";
-        const flagVisit = visitTeam.codigo_iso !== "unknown" ? `https://flagcdn.com/${visitTeam.codigo_iso}.svg` : "https://flagcdn.com/un.svg";
-
-        const formattedDate = matchDate.toLocaleString('es-MX', {
-            month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
-        });
-
-        const inputsDisabled = isLocked || !AppState.session;
-        let footerContent = "";
-        
-        if (isLocked) {
-            footerContent = `
-                <div class="prediction-status-locked">
-                    <i data-lucide="lock" style="width: 14px; height: 14px;"></i>
-                    <span>Apuestas Cerradas</span>
-                </div>
-            `;
-        } else if (!AppState.session) {
-            footerContent = `
-                <a href="../login/index.html" class="save-prediction-btn" style="text-decoration:none;">
-                    <i data-lucide="log-in" style="width: 14px; height: 14px;"></i>
-                    <span>Ingresar para jugar</span>
-                </a>
-            `;
-        } else {
-            footerContent = `
-                <button class="save-prediction-btn" onclick="savePrediction(${match.id})" id="save-btn-${match.id}">
-                    <i data-lucide="save" style="width: 14px; height: 14px;"></i>
-                    <span>${prediction ? 'Actualizar' : 'Guardar Apuesta'}</span>
-                </button>
-            `;
-        }
-
-        const card = document.createElement("div");
-        card.className = `glass-card match-card ${isLocked && !isFinished ? '' : 'pulsing-border'}`;
-        card.style.animationDelay = `${index * 0.04}s`;
-        card.innerHTML = `
-            ${pointsTag}
-            <div class="match-header-info">
-                <span class="match-group">Grupo ${localTeam.grupo || 'A'}</span>
-                <span class="match-time">
-                    <i data-lucide="clock" style="width: 12px; height: 12px;"></i>
-                    ${formattedDate}
-                </span>
-            </div>
-            
-            <div class="match-versus-area">
-                <div class="team-column">
-                    <div class="flag-wrapper"><img class="flag-img" src="${flagLocal}" onerror="this.src='https://flagcdn.com/un.svg'"></div>
-                    <span class="team-name" title="${localTeam.nombre}">${localTeam.nombre}</span>
-                    <span class="team-siglas">${localTeam.siglas}</span>
-                </div>
-                
-                <div class="score-inputs-container">
-                    <input type="number" min="0" max="99" class="score-input" id="score-l-${match.id}" value="${predL}" ${inputsDisabled ? 'disabled' : ''} placeholder="-">
-                    <span class="score-divider">:</span>
-                    <input type="number" min="0" max="99" class="score-input" id="score-v-${match.id}" value="${predV}" ${inputsDisabled ? 'disabled' : ''} placeholder="-">
-                </div>
-                
-                <div class="team-column">
-                    <div class="flag-wrapper"><img class="flag-img" src="${flagVisit}" onerror="this.src='https://flagcdn.com/un.svg'"></div>
-                    <span class="team-name" title="${visitTeam.nombre}">${visitTeam.nombre}</span>
-                    <span class="team-siglas">${visitTeam.siglas}</span>
-                </div>
-            </div>
-            
-            <div class="match-footer">
-                ${realScoreBadge}
-                ${footerContent}
-                ${prediction && !isLocked && AppState.session ? `
-                    <span class="prediction-status-saved">
-                        <i data-lucide="check-circle" style="width: 12px; height: 12px;"></i> Pronóstico Guardado
-                    </span>
-                ` : ''}
-            </div>
-        `;
-        grid.appendChild(card);
+        grid.appendChild(createStandardMatchCard(match, index));
     });
 
     if (remaining > 0) {
@@ -442,6 +335,120 @@ function renderMatches() {
     }
 
     if (typeof lucide !== 'undefined') lucide.createIcons();
+}
+
+function createStandardMatchCard(match, index) {
+    const localTeam = match.equipo_local || { nombre: "Local", siglas: "LOC", codigo_iso: "unknown", grupo: "A" };
+    const visitTeam = match.equipo_visitante || { nombre: "Visitante", siglas: "VIS", codigo_iso: "unknown", grupo: "A" };
+
+    const prediction = AppState.predictions.find(p => p.partido_id === match.id);
+    const predL = prediction && prediction.goles_local !== null ? prediction.goles_local : "";
+    const predV = prediction && prediction.goles_visitante !== null ? prediction.goles_visitante : "";
+
+    const matchDate = new Date(match.fecha_hora);
+    const isLocked = !isNaN(matchDate) && matchDate <= AppState.currentDate;
+    const isFinished = match.goles_local !== null && match.goles_visitante !== null;
+    let pointsTag = "";
+    let realScoreBadge = "";
+
+    if (isFinished) {
+        const earned = prediction ? (prediction.puntos_ganados || 0) : 0;
+        if (prediction) {
+            if (earned === 3) pointsTag = `<div class="points-earned-tag gold">+3 Puntos (Exacto)</div>`;
+            else if (earned === 1) pointsTag = `<div class="points-earned-tag" style="background: #475569; color: white;">+1 Punto (Resultado)</div>`;
+            else pointsTag = `<div class="points-earned-tag" style="background: var(--danger); color: white;">0 Puntos</div>`;
+        } else {
+            pointsTag = `<div class="points-earned-tag" style="background: rgba(255, 255, 255, 0.05); color: var(--text-muted); border: 1px solid var(--border-card);">Sin Apuesta</div>`;
+        }
+
+        realScoreBadge = `
+            <div class="real-score-badge">
+                <span class="subtitle" style="display:block; font-size:0.6rem;">Resultado Real</span>
+                <span class="real-score-val">${match.goles_local} - ${match.goles_visitante}</span>
+            </div>
+        `;
+    }
+
+    const flagLocal = localTeam.codigo_iso !== "unknown" ? `https://flagcdn.com/${localTeam.codigo_iso}.svg` : "https://flagcdn.com/un.svg";
+    const flagVisit = visitTeam.codigo_iso !== "unknown" ? `https://flagcdn.com/${visitTeam.codigo_iso}.svg` : "https://flagcdn.com/un.svg";
+
+    const formattedDate = isNaN(matchDate) ? "Por Definir" : matchDate.toLocaleString('es-MX', {
+        month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+    });
+
+    const inputsDisabled = isLocked || !AppState.session;
+    let footerContent = "";
+    
+    if (isLocked) {
+        footerContent = `
+            <div class="prediction-status-locked">
+                <i data-lucide="lock" style="width: 14px; height: 14px;"></i>
+                <span>Apuestas Cerradas</span>
+            </div>
+        `;
+    } else if (!AppState.session) {
+        footerContent = `
+            <a href="../login/index.html" class="save-prediction-btn" style="text-decoration:none;">
+                <i data-lucide="log-in" style="width: 14px; height: 14px;"></i>
+                <span>Ingresar para jugar</span>
+            </a>
+        `;
+    } else {
+        footerContent = `
+            <button class="save-prediction-btn" onclick="savePrediction(${match.id})" id="save-btn-${match.id}">
+                <i data-lucide="save" style="width: 14px; height: 14px;"></i>
+                <span>${prediction ? 'Actualizar' : 'Guardar Apuesta'}</span>
+            </button>
+        `;
+    }
+
+    let faseText = match.fase || 'Fase de Grupos';
+    if (faseText === 'Fase de Grupos') faseText = `Grupo ${localTeam.grupo || 'A'}`;
+
+    const card = document.createElement("div");
+    card.className = `glass-card match-card ${isLocked && !isFinished ? '' : 'pulsing-border'}`;
+    card.style.animationDelay = `${index * 0.04}s`;
+    card.innerHTML = `
+        ${pointsTag}
+        <div class="match-header-info">
+            <span class="match-group">${faseText}</span>
+            <span class="match-time">
+                <i data-lucide="clock" style="width: 12px; height: 12px;"></i>
+                ${formattedDate}
+            </span>
+        </div>
+        
+        <div class="match-versus-area">
+            <div class="team-column">
+                <div class="flag-wrapper"><img class="flag-img" src="${flagLocal}" onerror="this.src='https://flagcdn.com/un.svg'"></div>
+                <span class="team-name" title="${localTeam.nombre}">${localTeam.nombre}</span>
+                <span class="team-siglas">${localTeam.siglas}</span>
+            </div>
+            
+            <div class="score-inputs-container">
+                <input type="number" min="0" max="99" class="score-input" id="score-l-${match.id}" value="${predL}" ${inputsDisabled ? 'disabled' : ''} placeholder="-">
+                <span class="score-divider">:</span>
+                <input type="number" min="0" max="99" class="score-input" id="score-v-${match.id}" value="${predV}" ${inputsDisabled ? 'disabled' : ''} placeholder="-">
+            </div>
+            
+            <div class="team-column">
+                <div class="flag-wrapper"><img class="flag-img" src="${flagVisit}" onerror="this.src='https://flagcdn.com/un.svg'"></div>
+                <span class="team-name" title="${visitTeam.nombre}">${visitTeam.nombre}</span>
+                <span class="team-siglas">${visitTeam.siglas}</span>
+            </div>
+        </div>
+        
+        <div class="match-footer">
+            ${realScoreBadge}
+            ${footerContent}
+            ${prediction && !isLocked && AppState.session ? `
+                <span class="prediction-status-saved">
+                    <i data-lucide="check-circle" style="width: 12px; height: 12px;"></i> Pronóstico Guardado
+                </span>
+            ` : ''}
+        </div>
+    `;
+    return card;
 }
 
 function loadMoreMatches() {
@@ -479,60 +486,11 @@ function buildWingMatches(container, wingMatches, startIndex) {
         const m1 = wingMatches[i];
         const m2 = wingMatches[i+1];
         
-        if (m1) matchupDiv.appendChild(createMatchElement(m1, startIndex + i));
-        if (m2) matchupDiv.appendChild(createMatchElement(m2, startIndex + i + 1));
+        if (m1) matchupDiv.appendChild(createStandardMatchCard(m1, startIndex + i));
+        if (m2) matchupDiv.appendChild(createStandardMatchCard(m2, startIndex + i + 1));
         
         container.appendChild(matchupDiv);
     }
-}
-
-function createMatchElement(match, matchNumber) {
-    const matchDiv = document.createElement("div");
-    matchDiv.className = "bracket-match";
-
-    const localTeam = match.equipo_local || { nombre: "Por Definir", codigo_iso: "unknown" };
-    const visitTeam = match.equipo_visitante || { nombre: "Por Definir", codigo_iso: "unknown" };
-
-    const flagLocal = localTeam.codigo_iso !== "unknown" ? `https://flagcdn.com/${localTeam.codigo_iso}.svg` : "https://flagcdn.com/un.svg";
-    const flagVisit = visitTeam.codigo_iso !== "unknown" ? `https://flagcdn.com/${visitTeam.codigo_iso}.svg` : "https://flagcdn.com/un.svg";
-
-    const matchDate = new Date(match.fecha_hora);
-    const formattedDate = isNaN(matchDate) ? "Por Definir" : matchDate.toLocaleString('es-MX', {
-        month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
-    });
-
-    const isLocked = !isNaN(matchDate) && matchDate <= AppState.currentDate;
-    const inputsDisabled = isLocked || !AppState.session;
-
-    const prediction = AppState.predictions.find(p => p.partido_id === match.id);
-    const predL = prediction && prediction.goles_local !== null ? prediction.goles_local : "";
-    const predV = prediction && prediction.goles_visitante !== null ? prediction.goles_visitante : "";
-
-    matchDiv.innerHTML = `
-        <div class="compact-match-card ${isLocked ? '' : 'pulsing-border'}">
-            <div class="compact-header">
-                <span class="match-group">16avos - L${matchNumber}</span>
-                <span class="match-time">${formattedDate}</span>
-            </div>
-            
-            <div class="compact-team-row">
-                <div class="compact-team-info">
-                    <div class="flag-wrapper"><img src="${flagLocal}" style="width:100%; height:100%; object-fit:cover;" onerror="this.src='https://flagcdn.com/un.svg'"></div>
-                    <span class="team-name" title="${localTeam.nombre}">${localTeam.nombre}</span>
-                </div>
-                <input type="number" min="0" max="99" class="compact-score-input" id="score-l-${match.id}" value="${predL}" ${inputsDisabled ? 'disabled' : ''} placeholder="-" onblur="savePrediction(${match.id})">
-            </div>
-            
-            <div class="compact-team-row">
-                <div class="compact-team-info">
-                    <div class="flag-wrapper"><img src="${flagVisit}" style="width:100%; height:100%; object-fit:cover;" onerror="this.src='https://flagcdn.com/un.svg'"></div>
-                    <span class="team-name" title="${visitTeam.nombre}">${visitTeam.nombre}</span>
-                </div>
-                <input type="number" min="0" max="99" class="compact-score-input" id="score-v-${match.id}" value="${predV}" ${inputsDisabled ? 'disabled' : ''} placeholder="-" onblur="savePrediction(${match.id})">
-            </div>
-        </div>
-    `;
-    return matchDiv;
 }
 
 // ==========================================================================
