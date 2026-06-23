@@ -8,7 +8,7 @@ window.trophyAnimationLoaded = new Promise((resolve) => {
 });
 
 document.addEventListener("DOMContentLoaded", () => {
-    const isSubdir = window.location.pathname.includes('/eliminatoria/');
+    const isSubdir = window.location.pathname.includes('eliminatoria');
     const basePath = isSubdir ? '../img/worldcup_trophy/' : 'img/worldcup_trophy/';
     
     const container = document.createElement('div');
@@ -173,17 +173,18 @@ document.addEventListener("DOMContentLoaded", () => {
                 img.style.filter = 'drop-shadow(0 0 20px rgba(110, 230, 106, 0.12)) brightness(0.7)';
                 img.style.maxHeight = '80vh';
                 
-                // Para la eliminatoria, lo mantenemos fijo como un fondo
-                if (isSubdir) {
+                // Para la SPA con tabs, siempre lo mantenemos fijo como un fondo sin importar la URL
+                const isSPA = document.querySelector('.app-tabs-nav') !== null;
+                if (isSPA || isSubdir) {
                     container.style.position = 'fixed';
                     container.style.top = '0px';
                     container.style.zIndex = '-1';
                 } else {
-                    // En el index normal, se convierte en absolute para escrollear
                     container.style.position = 'absolute';
                     container.style.top = `${window.scrollY}px`;
-                    container.style.height = '100vh';
+                    container.style.zIndex = '-1';
                 }
+                container.style.height = '100vh';
             }
         };
         
