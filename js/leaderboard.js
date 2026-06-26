@@ -78,11 +78,11 @@ async function loadLeaderboardData() {
                 <td>
                     <span class="participant-name">${player.nombre_completo}</span>
                     ${isMe ? '<span class="participant-you-tag">Tú</span>' : ''}
-                    ${player.lastMatchPoints === 3 ? `<span style="color: var(--primary); font-size: 0.8rem; margin-left: 4px; font-weight: normal;">+3</span>` : ''}
-                    ${player.lastMatchPoints === 1 ? `<span style="color: var(--tertiary); font-size: 0.8rem; margin-left: 4px; font-weight: normal;">+1</span>` : ''}
-                    ${player.lastMatchPoints === 0 ? `<span style="color: var(--danger); font-size: 0.8rem; margin-left: 4px; font-weight: normal;">+0</span>` : ''}
+                    ${player.lastMatchPoints === 3 ? `<span class="last-match-points-3">+3</span>` : ''}
+                    ${player.lastMatchPoints === 1 ? `<span class="last-match-points-1">+1</span>` : ''}
+                    ${player.lastMatchPoints === 0 ? `<span class="last-match-points">+0</span>` : ''}
                 </td>
-                <td class="participant-subtext">
+                <td class="participant-subtext" id="td-correo">
                     ${player.correo}
                 </td>
                 <td style="text-align: center; vertical-align: middle;">
