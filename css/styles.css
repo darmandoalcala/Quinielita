@@ -1054,12 +1054,17 @@ h1, h2, h3, h4, h5, h6 {
         font-size: 0.8rem;
         flex: none;
     }
+    /*MIS PARTIDOS - ENCABEZADO Y FILTROS*/
+    #quiniela-subtitle.subtitle {
+        font-size: 0.7rem;
+    }
     .tab-header-flex {
         flex-direction: column;
         align-items: stretch;
     }
     .filter-bar {
-        flex-direction: column;
+        flex-direction: row;
+        gap: .5rem;
     }
     .filter-bar select {
         width: 100%;

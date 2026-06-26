@@ -25,13 +25,11 @@
     flex-wrap: wrap;
     justify-content: center;
     gap: 50px 1px;
-    /* row-gap 32px para dejar espacio a los labels, column-gap 4px */
 }
 
 .timeline-segment {
     position: relative;
     width: 12px;
-    /* Width of each match line */
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -241,11 +239,62 @@
 }
 
 @media (max-width: 768px) {
+/*Titulos del modal*/
+    .modal-header h3 {font-size: 1rem;}
+    .user-details-card {
+        font-size: 0.6rem;
+        max-width: 100%;
+    }
+    .details-notice {
+        font-size: 0.55rem;
+    }
     .modal-card {
         padding: 1.25rem;
     }
     .details-predictions-grid {
         grid-template-columns: 1fr;
+    }
+
+/*LINEA DEL TIEMPO*/
+    .timeline-wrapper {
+        padding: 0.5rem;
+        margin-bottom: 0.5rem;
+    }
+    .timeline-title {
+        font-size: 0.9rem;
+    }
+    .timeline-track {
+        gap: 25px 1px;
+    }
+    .timeline-segment {
+        width: 10px;
+    }
+    .timeline-line {
+        height: 3px;
+    }
+    .timeline-label {
+        font-size: 0.45rem;
+    }
+
+/*TARJETA DE PARTIDO (PREDICCIÓN)*/
+    .mini-prediction-card {
+        padding: 0.5rem;
+    }
+    .mini-card-header {
+        font-size: 0.6rem;
+    }
+    .mini-team-info {
+        font-size: 0.7rem;
+    }
+    .mini-flag {
+        width: 20px;
+        height: 13px;
+    }
+    .mini-score-val {
+        font-size: 0.8rem;
+    }
+    .mini-secret-lock {
+        font-size: 0.6rem;
     }
 }
 
