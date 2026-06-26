@@ -19,7 +19,7 @@ async function loadLeaderboardData() {
         finishedMatches.sort((a, b) => {
             const dateA = new Date(a.fecha_hora);
             const dateB = new Date(b.fecha_hora);
-            return dateB - dateA; 
+            return dateB - dateA;
         });
         const lastMatch = finishedMatches.length > 0 ? finishedMatches[0] : null;
 
@@ -195,9 +195,53 @@ async function viewPlayerPredictions(playerUserId) {
                 </div>
             </div>
         `;
+
         container.innerHTML += timelineHTML;
 
-        // Filtrar y ordenar cronológicamente
+        const showPredictionsButton = `
+            <div id="btn-show-preds-container" style="text-align: center; margin-top: 1rem; margin-bottom: 1rem; grid-column: 1 / -1;">
+                <button class="btn-view-predictions" onclick="renderPlayerPredictions('${playerUserId}')" style="margin: 0 auto;">
+                    <i data-lucide="eye" style="width: 14px; height: 14px;"></i>
+                    <span>Ver Pronósticos Detallados</span>
+                </button>
+            </div>
+            <div id="modal-predictions-list" style="display: contents;"></div>
+        `;
+        
+        container.innerHTML += showPredictionsButton;
+
+        if (typeof lucide !== 'undefined') { //Si existe lucide (iconos)
+            lucide.createIcons();
+        }
+
+    } catch (err) {
+        console.error("Error al visualizar apuestas ajenas:", err);
+        container.innerHTML = `<p class="empty-state" style="color:var(--danger)">No se pudieron cargar los datos solicitados en este momento.</p>`;
+    }
+}
+
+async function renderPlayerPredictions(playerUserId) {
+    const btnContainer = document.getElementById("btn-show-preds-container");
+    const listContainer = document.getElementById("modal-predictions-list");
+    if (!listContainer) return;
+
+    if (btnContainer) {
+        btnContainer.innerHTML = `<div class="spinner inline-spinner"></div> Cargando pronósticos...`;
+    }
+
+    try {
+        const { data: rawPreds, error } = await window.supabaseClient
+            .from('predicciones')
+            .select('*')
+            .eq('usuario_id', playerUserId);
+
+        if (error) throw error;
+
+        if (btnContainer) btnContainer.style.display = 'none';
+        listContainer.innerHTML = "";
+
+        const isMe = AppState.session ? playerUserId === AppState.session.user.id : false;
+
         const sortedMatches = [...AppState.matches].sort((a, b) => new Date(a.fecha_hora) - new Date(b.fecha_hora));
 
         sortedMatches.forEach(match => {
@@ -221,8 +265,7 @@ async function viewPlayerPredictions(playerUserId) {
                             <span>${localTeam.siglas}</span>
                         </div>
                         <div class="mini-secret-lock">
-                            <i data-lucide="lock" style="width: 10px; height: 10px;"></i>
-                            <span>Oculto</span>
+                            <i data-lucide="lock" style="width: 15px; height: 15px;"></i>
                         </div>
                         <div class="mini-team-info">
                             <span>${visitTeam.siglas}</span>
@@ -274,7 +317,7 @@ async function viewPlayerPredictions(playerUserId) {
                 </div>
                 ${cardBody}
             `;
-            container.appendChild(card);
+            listContainer.appendChild(card);
         });
 
         if (typeof lucide !== 'undefined') {
@@ -282,11 +325,10 @@ async function viewPlayerPredictions(playerUserId) {
         }
 
     } catch (err) {
-        console.error("Error al visualizar apuestas ajenas:", err);
-        container.innerHTML = `<p class="empty-state" style="color:var(--danger)">No se pudieron cargar los datos solicitados en este momento.</p>`;
+        console.error("Error al cargar pronósticos detallados:", err);
+        listContainer.innerHTML = `<p class="empty-state" style="color:var(--danger)">Hubo un error al cargar los pronósticos.</p>`;
     }
 }
-
 
 // Cerrar modal
 function closeUserDetailsModal() {
