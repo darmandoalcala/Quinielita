@@ -347,3 +347,62 @@
     border-top: 2px solid rgba(255, 255, 255, 0.2);
     z-index: 0;
 }
+/* ==========================================================
+   MOBILE BRACKET RESPONSIVENESS
+   ========================================================== */
+@media (max-width: 768px) {
+    .converging-bracket {
+        gap: 2vw;
+    }
+    .bracket-col {
+        min-width: 90px;
+    }
+    .bracket-column-title {
+        font-size: 2.5vw;
+    }
+    
+
+    .left-wing .bracket-col:not(:first-child) .bracket-match .match-card::before,
+    .right-wing .bracket-col:not(:first-child) .bracket-match .match-card::after,
+    .center-final .bracket-match .match-card::before,
+    .center-final .bracket-match .match-card::after {
+        width: 10px;
+    }
+    .left-wing .bracket-col:not(:last-child) .bracket-matchup::before,
+    .left-wing .bracket-col:not(:last-child) .bracket-matchup::after,
+    .right-wing .bracket-col:not(:last-child) .bracket-matchup::before,
+    .right-wing .bracket-col:not(:last-child) .bracket-matchup::after {
+        width: 10px;
+    }
+
+    .left-wing .bracket-col:not(:first-child) .bracket-match .match-card::before { left: -10px; }
+    .left-wing .bracket-col:not(:last-child) .bracket-matchup::before { right: -10px; }
+    .left-wing .bracket-col:not(:last-child) .bracket-matchup::after { right: -20px; }
+
+    .right-wing .bracket-col:not(:first-child) .bracket-match .match-card::after { right: -10px; }
+    .right-wing .bracket-col:not(:last-child) .bracket-matchup::before { left: -10px; }
+    .right-wing .bracket-col:not(:last-child) .bracket-matchup::after { left: -20px; }
+}
+
+
+@media (max-width: 768px) {
+    .converging-bracket {
+        gap: 2px !important;
+    }
+    .left-wing, .right-wing {
+        gap: 2px !important;
+    }
+    .bracket-col {
+        min-width: 70px !important;
+    }
+    .center-final {
+        min-width: 40px !important;
+        width: 40px !important;
+    }
+    .center-final img {
+        width: 100% !important; /* El trofeo se adapta */
+    }
+    .match-time {
+        font-size: 0.6rem;
+    }
+}

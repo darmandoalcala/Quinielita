@@ -8,7 +8,7 @@ window.trophyAnimationLoaded = new Promise((resolve) => {
 });
 
 document.addEventListener("DOMContentLoaded", () => {
-    const isSubdir = window.location.pathname.includes('eliminatoria');
+    const isSubdir = window.location.pathname.includes('eliminatoria') || window.location.pathname.includes('prueba');
     const basePath = isSubdir ? '../img/worldcup_trophy/' : 'img/worldcup_trophy/';
     
     const container = document.createElement('div');

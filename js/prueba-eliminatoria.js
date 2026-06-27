@@ -515,14 +515,80 @@ function buildWingMatches(container, wingMatches, startIndex) {
         const m1 = wingMatches[i];
         const m2 = wingMatches[i+1];
         
-        if (m1) matchupDiv.appendChild(createStandardMatchCard(m1, startIndex + i));
-        if (m2) matchupDiv.appendChild(createStandardMatchCard(m2, startIndex + i + 1));
+        if (m1) matchupDiv.appendChild(createPastBracketCard(m1, startIndex + i));
+        if (m2) matchupDiv.appendChild(createPastBracketCard(m2, startIndex + i + 1));
         
         container.appendChild(matchupDiv);
     }
 }
 
 // ==========================================================================
+
+function createPastBracketCard(match, index) {
+    const localTeam = match.equipo_local || { nombre: "Local", siglas: "LOC", codigo_iso: "unknown" };
+    const visitTeam = match.equipo_visitante || { nombre: "Visitante", siglas: "VIS", codigo_iso: "unknown" };
+
+    const prediction = AppState.predictions.find(p => p.partido_id === match.id);
+    const predL = prediction && prediction.goles_local !== null ? prediction.goles_local : "-";
+    const predV = prediction && prediction.goles_visitante !== null ? prediction.goles_visitante : "-";
+
+    const realL = match.goles_local !== null ? match.goles_local : "-";
+    const realV = match.goles_visitante !== null ? match.goles_visitante : "-";
+
+    let ptsClass = "past-pts-none";
+    let ptsText = "+0 Puntos";
+    
+    if (prediction) {
+        const earned = prediction.puntos_ganados || 0;
+        if (earned === 3) {
+            ptsClass = "past-pts-gold";
+            ptsText = "+3 Puntos";
+        } else if (earned === 1) {
+            ptsClass = "past-pts-silver";
+            ptsText = "+1 Punto";
+        } else {
+            ptsClass = "past-pts-danger";
+            ptsText = "+0 Puntos";
+        }
+    } else {
+        ptsText = "Sin Apuesta";
+    }
+
+    const flagLocal = localTeam.codigo_iso !== "unknown" ? "https://flagcdn.com/" + localTeam.codigo_iso + ".svg" : "https://flagcdn.com/un.svg";
+    const flagVisit = visitTeam.codigo_iso !== "unknown" ? "https://flagcdn.com/" + visitTeam.codigo_iso + ".svg" : "https://flagcdn.com/un.svg";
+
+    const card = document.createElement("div");
+    card.className = "past-match-card animate-scale-up";
+    card.style.animationDelay = (index % 8) * 0.05 + "s";
+
+    card.innerHTML = `
+        <div class="past-pts-badge ${ptsClass}">${ptsText}</div>
+        
+        <div class="past-teams-stack">
+            <div class="past-team-row">
+                <img class="past-team-flag" src="${flagLocal}" alt="Bandera">
+                <span class="past-team-name" title="${localTeam.nombre}">${localTeam.nombre}</span>
+            </div>
+            <div class="past-team-row">
+                <img class="past-team-flag" src="${flagVisit}" alt="Bandera">
+                <span class="past-team-name" title="${visitTeam.nombre}">${visitTeam.nombre}</span>
+            </div>
+        </div>
+
+        <div class="past-results-footer">
+            <div class="past-res-row">
+                <span class="past-res-label">Apuesta:</span>
+                <span class="past-res-val">${predL} - ${predV}</span>
+            </div>
+            <div class="past-res-row past-res-real">
+                <span class="past-res-label">Real:</span>
+                <span class="past-res-val">${realL} - ${realV}</span>
+            </div>
+        </div>
+    `;
+
+    return card;
+}
 // GUARDAR PREDICCIONES
 // ==========================================================================
 
@@ -601,3 +667,4 @@ async function savePrediction(matchId) {
         if (saveBtn) saveBtn.disabled = false;
     }
 }
+

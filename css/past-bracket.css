@@ -1,0 +1,169 @@
+/* ==========================================================
+   TARJETAS DE ELIMINATORIA PASADA (COMPACTAS)
+   ========================================================== */
+
+/* Ajustar las alas para que las tarjetas de 16avos se peguen a los extremos */
+.converging-bracket .left-wing .bracket-col#bracket-left-wing {
+    align-items: flex-start;
+}
+
+.converging-bracket .right-wing .bracket-col#bracket-right-wing {
+    align-items: flex-end;
+}
+
+/* Tarjeta compacta pasada */
+.past-match-card {
+    width: 160px; /* Tarjeta reducida */
+    padding: 0.6rem;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-size: 0.8rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border-card);
+    border-radius: var(--radius-md);
+    position: relative;
+    /* Glow general tenue */
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+}
+
+/* Puntos ganados arriba */
+.past-pts-badge {
+    text-align: center;
+    font-weight: 800;
+    font-family: var(--font-heading);
+    font-size: 0.8rem;
+    padding: 3px 6px;
+    border-radius: 4px;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+}
+.past-pts-gold {
+    background: var(--accent-gold);
+    color: var(--text-dark);
+}
+.past-pts-silver {
+    background: #cbd5e1;
+    color: var(--text-dark);
+}
+.past-pts-none {
+    background: rgba(255,255,255,0.05);
+    color: var(--text-muted);
+    border: 1px solid var(--border-card);
+}
+.past-pts-danger {
+    background: rgba(239, 68, 68, 0.2);
+    color: var(--danger);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+/* Contenedor de equipos apilados verticalmente */
+.past-teams-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.past-team-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.02);
+    padding: 4px 6px;
+    border-radius: 4px;
+    border: 1px solid rgba(255,255,255,0.02);
+}
+
+.past-team-flag {
+    width: 20px;
+    height: 14px;
+    object-fit: cover;
+    border-radius: 2px;
+    flex-shrink: 0;
+}
+
+.past-team-name {
+    font-weight: 600;
+    font-size: 0.75rem;
+    color: var(--text-main);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex-grow: 1;
+}
+
+/* Footer: Resultados Apuesta vs Real */
+.past-results-footer {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-top: 2px;
+    border-top: 1px solid rgba(255,255,255,0.05);
+    padding-top: 6px;
+    font-size: 0.7rem;
+    text-align: center;
+}
+
+.past-res-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.past-res-label {
+    color: var(--text-muted);
+}
+
+.past-res-val {
+    font-weight: 700;
+    color: #fff;
+    background: rgba(255,255,255,0.1);
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-family: var(--font-heading);
+}
+
+/* Destacar resultado real con gold y gold glow */
+.past-res-real .past-res-val {
+    color: var(--accent-gold);
+    background: rgba(212, 175, 55, 0.1);
+    text-shadow: 0 0 5px rgba(212, 175, 55, 0.5);
+    box-shadow: 0 0 8px rgba(212, 175, 55, 0.2);
+    border: 1px solid rgba(212, 175, 55, 0.3);
+}
+
+.past-res-real .past-res-label {
+    color: rgba(212, 175, 55, 0.8);
+    font-weight: 600;
+}
+
+/* ==========================================================
+   MOBILE PAST BRACKET RESPONSIVENESS
+   ========================================================== */
+@media (max-width: 768px) {
+    .past-match-card {
+        width: 100%;
+        min-width: 80px;
+        padding: 0.4rem;
+        gap: 4px;
+        font-size: 0.7rem;
+    }
+    .past-pts-badge {
+        font-size: 0.65rem;
+        padding: 2px 4px;
+    }
+    .past-team-row {
+        gap: 4px;
+        padding: 2px 4px;
+    }
+    .past-team-flag {
+        width: 16px;
+        height: 11px;
+    }
+    .past-team-name {
+        font-size: 0.65rem;
+    }
+    .past-results-footer {
+        font-size: 0.6rem;
+    }
+}
