@@ -145,58 +145,67 @@ async function viewPlayerPredictions(playerUserId) {
 
         container.innerHTML = "";
 
-        // Genera LINEA DEL TIEMPO
-        const groupMatches = AppState.matches.filter(m => !m.fase || m.fase === 'Fase de Grupos');
-        groupMatches.sort((a, b) => new Date(a.fecha_hora) - new Date(b.fecha_hora));
+        // Genera LINEA DEL TIEMPO PARA MULTIPLES FASES
+        const phasesToTimeline = [
+            { id: "Fase de Grupos", label: "Fase de Grupos", totalMatches: 72 },
+            { id: "16avos", label: "16avos de Final", totalMatches: 16 }
+        ];
 
-        let timelineSegments = "";
-        const TOTAL_GROUP_MATCHES = 72;
+        let timelinesHTML = "";
 
-        for (let i = 0; i < TOTAL_GROUP_MATCHES; i++) {
-            let lineClass = "";
-            let labelHTML = "";
+        phasesToTimeline.forEach(phaseConfig => {
+            const matches = AppState.matches.filter(m => (m.fase || 'Fase de Grupos') === phaseConfig.id);
+            if (matches.length === 0) return;
+            
+            matches.sort((a, b) => new Date(a.fecha_hora) - new Date(b.fecha_hora));
 
-            if (i < groupMatches.length) {
-                const match = groupMatches[i];
-                const isFinished = match.goles_local !== null && match.goles_visitante !== null;
-                const pred = rawPreds.find(p => p.partido_id === match.id);
+            let timelineSegments = "";
+            for (let i = 0; i < phaseConfig.totalMatches; i++) {
+                let lineClass = "";
+                let labelHTML = "";
 
-                if (isFinished) {
-                    const pts = pred ? (pred.puntos_ganados || 0) : 0;
-                    if (pts === 3) {
-                        lineClass = "pts-3";
-                        labelHTML = `<span class="timeline-label top pts-3">3</span>`;
-                    } else if (pts === 1) {
-                        lineClass = "pts-1";
-                        labelHTML = `<span class="timeline-label top pts-1">1</span>`;
-                    } else {
-                        lineClass = "pts-0";
-                        labelHTML = `<span class="timeline-label bottom pts-0">0</span>`;
+                if (i < matches.length) {
+                    const match = matches[i];
+                    const isFinished = match.goles_local !== null && match.goles_visitante !== null;
+                    const pred = rawPreds.find(p => p.partido_id === match.id);
+
+                    if (isFinished) {
+                        const pts = pred ? (pred.puntos_ganados || 0) : 0;
+                        if (pts === 3) {
+                            lineClass = "pts-3";
+                            labelHTML = `<span class="timeline-label top pts-3">3</span>`;
+                        } else if (pts === 1) {
+                            lineClass = "pts-1";
+                            labelHTML = `<span class="timeline-label top pts-1">1</span>`;
+                        } else {
+                            lineClass = "pts-0";
+                            labelHTML = `<span class="timeline-label bottom pts-0">0</span>`;
+                        }
                     }
                 }
+
+                timelineSegments += `
+                    <div class="timeline-segment">
+                        ${labelHTML.includes('top') ? labelHTML : ''}
+                        <div class="timeline-line ${lineClass}"></div>
+                        ${labelHTML.includes('bottom') ? labelHTML : ''}
+                    </div>
+                `;
             }
 
-            timelineSegments += `
-                <div class="timeline-segment">
-                    ${labelHTML.includes('top') ? labelHTML : ''}
-                    <div class="timeline-line ${lineClass}"></div>
-                    ${labelHTML.includes('bottom') ? labelHTML : ''}
-                </div>
-            `;
-        }
-
-        const timelineHTML = `
-            <div class="timeline-wrapper" style="grid-column: 1 / -1;">
-                <h4 class="timeline-title">Fase de Grupos</h4>
-                <div class="timeline-scroll-container">
-                    <div class="timeline-track">
-                        ${timelineSegments}
+            timelinesHTML += `
+                <div class="timeline-wrapper" style="grid-column: 1 / -1; margin-bottom: 1rem;">
+                    <h4 class="timeline-title" style="font-size: 0.9rem; margin-bottom: 0.5rem;">${phaseConfig.label}</h4>
+                    <div class="timeline-scroll-container">
+                        <div class="timeline-track">
+                            ${timelineSegments}
+                        </div>
                     </div>
                 </div>
-            </div>
-        `;
+            `;
+        });
 
-        container.innerHTML += timelineHTML;
+        container.innerHTML += timelinesHTML;
 
         const showPredictionsButton = `
             <div id="btn-show-preds-container" style="text-align: center; margin-top: 1rem; margin-bottom: 1rem; grid-column: 1 / -1;">
