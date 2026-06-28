@@ -302,10 +302,21 @@ function renderMatches() {
     });
 
     if (filteredMatches.length === 0) {
+        let title = "Sin resultados";
+        let msg = "No se encontraron partidos para los filtros aplicados.";
+        let icon = "info";
+
+        if (statusFilter === "Pendiente") {
+            title = "¡Fase de Grupos Concluida!";
+            msg = "Ya no hay partidos pendientes. Cambia el filtro superior a <strong>'Finalizados'</strong> para ver los resultados de esta fase.";
+            icon = "check-circle-2";
+        }
+
         grid.innerHTML = `
-            <div class="loading-placeholder">
-                <i data-lucide="info" style="width: 38px; height: 38px; color: var(--text-muted);"></i>
-                <p style="margin-top: 10px;">No se encontraron partidos para los filtros aplicados.</p>
+            <div class="loading-placeholder" style="background: rgba(255,255,255,0.02); border-radius: 12px; padding: 3rem 1rem; border: 1px dashed rgba(255,255,255,0.1); margin-top: 1rem;">
+                <i data-lucide="${icon}" style="width: 42px; height: 42px; color: var(--primary);"></i>
+                <h3 style="margin: 12px 0 8px 0; color: var(--text-main); font-size: 1.2rem;">${title}</h3>
+                <p style="margin: 0; font-size: 0.95rem; color: var(--text-muted); max-width: 400px; line-height: 1.4;">${msg}</p>
             </div>
         `;
         if (typeof lucide !== 'undefined') lucide.createIcons();
