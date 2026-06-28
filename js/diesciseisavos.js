@@ -90,7 +90,7 @@ function setupAnonymousHeader() {
 
     if (profileWidget) {
         profileWidget.innerHTML = `
-            <a href="../login/index.html" class="btn btn-primary btn-sm" style="text-decoration:none; gap:6px;">
+            <a href="login/index.html" class="btn btn-primary btn-sm" style="text-decoration:none; gap:6px;">
                 <i data-lucide="log-in" style="width:14px; height:14px;"></i>
                 <span>Iniciar Sesión</span>
             </a>
@@ -388,7 +388,7 @@ function createStandardMatchCard(match, index) {
         `;
     } else if (!AppState.session) {
         footerContent = `
-            <a href="../login/index.html" class="save-prediction-btn" style="text-decoration:none;">
+            <a href="login/index.html" class="save-prediction-btn" style="text-decoration:none;">
                 <i data-lucide="log-in" style="width: 14px; height: 14px;"></i>
                 <span>Ingresar para jugar</span>
             </a>
@@ -598,6 +598,25 @@ async function savePrediction(matchId) {
         }
         loadQuinielaData();
     } finally {
-        if (saveBtn) saveBtn.disabled = false;
+        if (saveBtn) {
+            saveBtn.disabled = false;
+            const pred = AppState.predictions.find(p => p.partido_id === matchId);
+            saveBtn.innerHTML = `
+                <i data-lucide="save" style="width: 14px; height: 14px;"></i>
+                <span>${pred ? 'Actualizar' : 'Guardar Apuesta'}</span>
+            `;
+            
+            if (pred) {
+                const footer = saveBtn.closest('.match-footer');
+                if (footer && !footer.querySelector('.prediction-status-saved')) {
+                    const span = document.createElement('span');
+                    span.className = 'prediction-status-saved';
+                    span.innerHTML = '<i data-lucide="check-circle" style="width: 12px; height: 12px;"></i> Pronóstico Guardado';
+                    footer.insertBefore(span, saveBtn);
+                }
+            }
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        }
     }
 }
+

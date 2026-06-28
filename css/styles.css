@@ -1052,7 +1052,6 @@ h1, h2, h3, h4, h5, h6 {
     .nav-tab {
         padding: 0.75rem 0.85rem;
         font-size: 0.8rem;
-        flex: none;
     }
     /*MIS PARTIDOS - ENCABEZADO Y FILTROS*/
     #quiniela-subtitle.subtitle {
@@ -1069,9 +1068,7 @@ h1, h2, h3, h4, h5, h6 {
     .filter-bar select {
         width: 100%;
     }
-    .matches-grid {
-        grid-template-columns: 1fr;
-    }
+    .matches-grid { grid-template-columns: 1fr 1fr; gap: 4px; }
 }
 
 
@@ -1178,3 +1175,7 @@ h1, h2, h3, h4, h5, h6 {
         display: none !important;
     }
 }
+
+
+
+

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quiniela Zenth</title>
+    <title>Quiniela Zenth - Fase Final</title>
     <link rel="icon" href="img/fav.png" type="image/png">
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -12,45 +12,39 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700;800&display=swap"
         rel="stylesheet">
-
+    
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
 
-    <!-- Supabase JS Client -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-    <!-- CSS del Proyecto -->
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="css/leaderboard.css">
     <link rel="stylesheet" href="css/leaderboard-modal.css">
+    <link rel="stylesheet" href="css/eliminatoria.css">
 </head>
 
 <body>
     <!-- Notificaciones Toast -->
     <div id="toast-container" class="toast-container"></div>
 
-
     <!-- PANTALLA DE CARGA -->
     <div id="loading-screen" class="screen loading-screen">
         <div class="spinner-container">
             <img src="img/worldcup_trophy/0001.webp" class="trophy-spinner main-trophy-spinner" id="main-loading-trophy" alt="Cargando...">
-            <p>Cargando quiniela...</p>
+            <p>Cargando Quiniela (<strong style="color: #84c54c">Fase Final</strong>)...</p>
         </div>
     </div>
-
+    
     <!-- PANTALLA DASHBOARD TANTO PARA PUBLICO COMO PRIVADO -->
     <div id="dashboard-screen" class="screen dashboard-screen">
-        <!-- Barra de Navegación / Header -->
         <header class="app-header">
             <div class="header-logo">
                 <img src="img/logo.png" alt="Logo Empresa" class="company-logo" style="filter: brightness(100)">
                 <div class="logo-text">
                     <h1 style="color: #84c54c">QUINIELA</h1>
-                    <span>FIFA World Cup 2026</span>
+                    <span>FIFA World Cup 2026 - <strong style="color: #c44747">Fase Final</strong></span>
                 </div>
             </div>
 
-            <!-- Perfil Rápido o Botón de Acceso (Dinámico) -->
             <div class="user-profile-widget" id="header-profile-widget">
                 <!-- Cargando widget... -->
                 <div class="spinner inline-spinner" style="margin: 0;"></div>
@@ -58,10 +52,14 @@
         </header>
 
         <!-- Pestañas Principales (Tab Navigation) -->
-        <nav class="app-tabs-nav glass-card">
-            <button class="nav-tab active" data-tab="tab-quiniela">
+        <nav class="app-tabs-nav glass-card" style="position: relative; z-index: 10;">
+            <button class="nav-tab" data-tab="tab-grupos">
                 <i data-lucide="calendar"></i>
-                <span>Partidos y Quiniela</span>
+                <span>Fase de Grupos</span>
+            </button>
+            <button class="nav-tab active" data-tab="tab-eliminatoria">
+                <i data-lucide="swords"></i>
+                <span>Eliminatoria</span>
             </button>
             <button class="nav-tab" data-tab="tab-leaderboard">
                 <i data-lucide="trophy"></i>
@@ -69,14 +67,16 @@
             </button>
         </nav>
 
-        <!-- Contenedor Principal de Vistas -->
-        <main class="app-main-content">
+        <!-- TITULO DE FONDO -->
+        <h2 id="fase-title" class="fase-background-title">FASE FINAL</h2>
 
-            <!-- TAB 1: QUINIELA / PARTIDOS -->
-            <section id="tab-quiniela" class="tab-content active">
+        <main class="app-main-content">
+            
+            <!-- TAB 1: GRUPOS -->
+            <section id="tab-grupos" class="tab-content">
                 <div class="tab-header-flex">
                     <div class="section-title">
-                        <h2>Calendario & Predicciones</h2>
+                        <h2>Fase de Grupos</h2>
                         <p class="subtitle" id="quiniela-subtitle">Cargando detalles...</p>
                     </div>
 
@@ -106,8 +106,7 @@
                                 <option value="Pendiente" selected>Pendientes</option>
                                 <option value="ALL">Todo</option>
                                 <option value="Finalizado">Finalizados</option>
-                                <option value="Apuestas" id="filter-my-predictions" style="display:none;">Mis
-                                    Pronósticos</option>
+                                <option value="Apuestas" id="filter-my-predictions" style="display:none;">Mis Pronósticos</option>
                             </select>
                         </div>
                     </div>
@@ -122,7 +121,36 @@
                 </div>
             </section>
 
-            <!-- TAB 2: LEADERBOARD -->
+            <!-- TAB 2: ELIMINATORIA -->
+            <section id="tab-eliminatoria" class="tab-content active" style="padding-bottom: 4rem;">
+                <div class="tab-header-flex">
+                    <div class="section-title">
+                        <h2>Fase Eliminatoria</h2>
+                        <p class="subtitle" style="color: var(--text-muted); font-size: 0.9rem;">16avos dae Final</p>
+                    </div>
+                </div>
+
+                <div class="converging-bracket-wrapper" id="pronosticos-container">
+                    <div class="converging-bracket">
+                        <div class="left-wing">
+                            <div class="bracket-col" id="bracket-left-wing">
+                                <h3 class="bracket-column-title">16avos</h3>
+                                <!-- Los partidos L1 a L8 se inyectarán dinámicamente aquí -->
+                            </div>
+                        </div>
+                        <div class="center-final" id="center-trophy-container" style="display: flex; align-items: center; justify-content: center; width: 30vw; min-width: 150px; position: relative;">
+                        </div>
+                        <div class="right-wing">
+                            <div class="bracket-col" id="bracket-right-wing">
+                                <h3 class="bracket-column-title">16avos</h3>
+                                <!-- Los partidos L9 a L16 se inyectarán dinámicamente aquí -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 3: LEADERBOARD -->
             <section id="tab-leaderboard" class="tab-content">
                 <div class="section-title">
                     <h2>Tabla de Posiciones</h2>
@@ -135,7 +163,7 @@
                                 <tr>
                                     <th style="width: 80px;">Rango</th>
                                     <th>Nombre</th>
-                                    <th id="th-correo">Correo</th>
+                                    <th>Correo</th>
                                     <th style="text-align: center; width: 100px;">Puntos</th>
                                     <th style="text-align: center; width: 160px;">Acción</th>
                                 </tr>
@@ -152,132 +180,12 @@
                 </div>
             </section>
 
-            <!-- TAB 3: SOPORTE TÉCNICO -->
-            <section id="tab-tickets" class="tab-content">
-                <!-- Se poblará dinámicamente según estado de Login -->
-                <div id="support-tab-anonymous" class="loading-placeholder">
-                    <i data-lucide="message-square" style="width: 48px; height: 48px; color: var(--border-card);"></i>
-                    <h3 style="margin-top: 1rem; font-family: var(--font-heading);">Soporte Técnico Restringido</h3>
-                    <p
-                        style="color:var(--text-muted); max-width: 380px; margin: 0.5rem auto 1.5rem auto; font-size:0.85rem;">
-                        Debes contar con una cuenta activa e iniciar sesión para poder reportar inconvenientes y chatear
-                        con nuestros agentes.
-                    </p>
-                    <a href="login/index.html" class="btn btn-primary">
-                        <span>Iniciar Sesión</span>
-                        <i data-lucide="log-in"></i>
-                    </a>
-                </div>
-
-                <div id="support-tab-authenticated" class="hidden">
-                    <div class="tab-header-flex">
-                        <div class="section-title">
-                            <h2>Soporte & Asistencia</h2>
-                            <p class="subtitle">¿Tienes alguna duda o problema? Crea un reporte y un agente te
-                                responderá a la brevedad.</p>
-                        </div>
-                        <button class="btn btn-primary" onclick="openNewTicketModal()">
-                            <i data-lucide="plus-circle"></i>
-                            <span>Nuevo Reporte</span>
-                        </button>
-                    </div>
-
-                    <div id="tickets-container" class="tickets-layout">
-                        <!-- Izquierda: Lista de Tickets -->
-                        <div class="tickets-sidebar glass-card">
-                            <h3 class="sidebar-title">Mis Reportes</h3>
-                            <div id="tickets-list" class="tickets-list">
-                                <p class="empty-state">No has creado ningún reporte aún.</p>
-                            </div>
-                        </div>
-
-                        <!-- Derecha: Conversación de Soporte -->
-                        <div id="ticket-chat-area" class="ticket-chat-area glass-card empty">
-                            <div class="chat-placeholder">
-                                <i data-lucide="message-square" class="placeholder-icon"></i>
-                                <h3>Selecciona un Reporte</h3>
-                                <p>Haz clic en cualquiera de tus reportes de la izquierda para ver el historial e
-                                    intercambiar mensajes de seguimiento.</p>
-                            </div>
-
-                            <!-- Conversación Activa -->
-                            <div id="chat-active-container" class="chat-active-container hidden">
-                                <div class="chat-header">
-                                    <div>
-                                        <h3 id="chat-ticket-title">Título del Reporte</h3>
-                                        <div class="chat-meta">
-                                            <span id="chat-ticket-id" class="badge">#ID-12</span>
-                                            <span id="chat-ticket-status" class="badge badge-success">Abierto</span>
-                                            <span id="chat-ticket-date" class="date">Hace 2 horas</span>
-                                        </div>
-                                    </div>
-                                    <button onclick="closeCurrentTicket()" class="btn btn-secondary btn-sm"
-                                        id="close-ticket-btn">
-                                        <i data-lucide="check-circle-2"></i> Cerrar Reporte
-                                    </button>
-                                </div>
-
-                                <div id="chat-messages" class="chat-messages"></div>
-
-                                <form id="chat-reply-form" class="chat-reply-form">
-                                    <textarea id="chat-reply-input" placeholder="Escribe un mensaje de seguimiento..."
-                                        required></textarea>
-                                    <button type="submit" class="btn btn-primary btn-icon-only">
-                                        <i data-lucide="send"></i>
-                                    </button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
         </main>
-    </div>
-
-    <!-- MODAL: CREACIÓN DE TICKET -->
-    <div id="new-ticket-modal" class="modal-overlay hidden">
-        <div class="glass-card modal-card animate-scale-up">
-            <div class="modal-header">
-                <h3>Crear Nuevo Reporte</h3>
-                <button onclick="closeNewTicketModal()" class="btn-close-modal">
-                    <i data-lucide="x"></i>
-                </button>
-            </div>
-            <form id="new-ticket-form" class="form-group">
-                <div class="input-wrapper">
-                    <label for="ticket-title">Título del Inconveniente</label>
-                    <input type="text" id="ticket-title"
-                        placeholder="Ej: No puedo actualizar mi pronóstico del partido México vs Argentina" required>
-                </div>
-                <div class="input-wrapper">
-                    <label for="ticket-category">Categoría</label>
-                    <select id="ticket-category" required>
-                        <option value="Apuestas">Problema con Pronósticos / Apuestas</option>
-                        <option value="Perfil">Actualización de Datos / Perfil</option>
-                        <option value="Puntos">Cálculo de Puntos / Clasificación</option>
-                        <option value="Otro">Otro inconveniente técnico</option>
-                    </select>
-                </div>
-                <div class="input-wrapper">
-                    <label for="ticket-description">Descripción detallada</label>
-                    <textarea id="ticket-description" rows="5"
-                        placeholder="Explica detalladamente qué sucedió para que podamos ayudarte mejor..."
-                        required></textarea>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" onclick="closeNewTicketModal()" class="btn btn-secondary">Cancelar</button>
-                    <button type="submit" class="btn btn-primary">
-                        <span>Enviar Reporte</span>
-                        <i data-lucide="send"></i>
-                    </button>
-                </div>
-            </form>
-        </div>
     </div>
 
     <!-- MODAL: DETALLES DE PRONÓSTICOS DE OTRO PARTICIPANTE (LEADERBOARD) -->
     <div id="user-details-modal" class="modal-overlay hidden">
-        <div class="glass-card modal-card user-details-card animate-scale-up">
+        <div class="glass-card modal-card user-details-card animate-scale-up" style="position: relative; z-index: 50;">
             <div class="modal-header">
                 <div>
                     <h3 id="details-user-name">Detalles de Participante</h3>
@@ -290,8 +198,7 @@
             <div class="modal-body">
                 <p class="details-notice">
                     <i data-lucide="info"></i>
-                    Por seguridad y juego limpio, solo verás las elecciones de partidos que ya comenzaron. Los partidos
-                    pendientes aparecen ocultos con un candado.
+                    Por seguridad y juego limpio, solo verás las elecciones de partidos que ya comenzaron. Los partidos pendientes aparecen ocultos con un candado.
                 </p>
                 <div id="details-predictions-grid" class="details-predictions-grid"></div>
             </div>
@@ -301,11 +208,15 @@
         </div>
     </div>
 
+    <!-- Supabase JS Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <!-- Scripts del Proyecto -->
     <script src="js/config.js"></script>
     <script src="js/supabase.js"></script>
     <script src="js/leaderboard.js"></script>
-    <script src="js/app.js"></script>
+    <script src="js/diesciseisavos.js"></script>
+    <script src="js/anim.js"></script>
 </body>
 
 </html>
+

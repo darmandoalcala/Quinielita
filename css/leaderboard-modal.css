@@ -298,3 +298,39 @@
     }
 }
 
+
+/* CONTENEDORES DE FASES */
+.phase-box {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.phase-box-title {
+    font-size: 1rem;
+    color: var(--text-main);
+    margin-bottom: 0.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+.phase-locked-message {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem;
+    color: var(--text-muted);
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 6px;
+    gap: 8px;
+    text-align: center;
+}
+.phase-locked-message i {
+    color: rgba(255, 255, 255, 0.2);
+}

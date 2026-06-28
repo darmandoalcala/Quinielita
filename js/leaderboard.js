@@ -205,7 +205,7 @@ async function viewPlayerPredictions(playerUserId) {
                     <span>Ver Pronósticos Detallados</span>
                 </button>
             </div>
-            <div id="modal-predictions-list" style="display: contents;"></div>
+            <div id="modal-predictions-list" style="grid-column: 1 / -1; display: flex; flex-direction: column; width: 100%;"></div>
         `;
         
         container.innerHTML += showPredictionsButton;
@@ -242,83 +242,138 @@ async function renderPlayerPredictions(playerUserId) {
 
         const isMe = AppState.session ? playerUserId === AppState.session.user.id : false;
 
-        const sortedMatches = [...AppState.matches].sort((a, b) => new Date(a.fecha_hora) - new Date(b.fecha_hora));
+        const orderedPhases = ["Fase de Grupos", "16avos", "Octavos", "Cuartos", "Semifinales", "Tercer lugar", "Final"];
+        let groupedMatches = {};
+        orderedPhases.forEach(ph => groupedMatches[ph] = []);
+        
+        AppState.matches.forEach(m => {
+            const phase = m.fase || "Fase de Grupos";
+            if (groupedMatches[phase] !== undefined) {
+                groupedMatches[phase].push(m);
+            }
+        });
+        
+        let finalHTML = "";
 
-        sortedMatches.forEach(match => {
-            const localTeam = match.equipo_local || { nombre: "Local", siglas: "LOC", codigo_iso: "unknown" };
-            const visitTeam = match.equipo_visitante || { nombre: "Visitante", siglas: "VIS", codigo_iso: "unknown" };
+        orderedPhases.forEach(phase => {
+            const phaseMatches = groupedMatches[phase];
 
-            const matchDate = new Date(match.fecha_hora);
-            const isStarted = matchDate <= AppState.currentDate;
-            const isFinished = match.goles_local !== null && match.goles_visitante !== null;
+            let isPhaseUnlocked = true;
+            if (phase !== "Fase de Grupos" && !isMe) {
+                if (phaseMatches.length === 0) {
+                    isPhaseUnlocked = false; // No hay partidos = aún no llegamos a esa fase
+                } else {
+                    const latestMatchTime = Math.max(...phaseMatches.map(m => new Date(m.fecha_hora).getTime()));
+                    if (AppState.currentDate.getTime() < latestMatchTime) {
+                        isPhaseUnlocked = false;
+                    }
+                }
+            }
 
-            const pred = rawPreds.find(p => p.partido_id === match.id);
+            finalHTML += `<div class="phase-box">`;
+            finalHTML += `<h3 class="phase-box-title">${phase}</h3>`;
 
-            let cardBody = "";
-            let pointsEarnedLabel = "";
-
-            if (!isStarted && !isMe) {
-                cardBody = `
-                    <div class="mini-card-teams">
-                        <div class="mini-team-info">
-                            <img class="mini-flag" src="https://flagcdn.com/${localTeam.codigo_iso}.svg" alt="">
-                            <span>${localTeam.siglas}</span>
-                        </div>
-                        <div class="mini-secret-lock">
-                            <i data-lucide="lock" style="width: 15px; height: 15px;"></i>
-                        </div>
-                        <div class="mini-team-info">
-                            <span>${visitTeam.siglas}</span>
-                            <img class="mini-flag" src="https://flagcdn.com/${visitTeam.codigo_iso}.svg" alt="">
-                        </div>
+            if (!isPhaseUnlocked) {
+                finalHTML += `
+                    <div class="phase-locked-message">
+                        <i data-lucide="lock" style="width: 32px; height: 32px;"></i>
+                        <span>Fase Oculta</span>
+                    </div>
+                `;
+            } else if (phaseMatches.length === 0) {
+                // Caso especial: si esMi perfil, está desbloqueada pero no hay partidos
+                finalHTML += `
+                    <div class="phase-locked-message" style="opacity: 0.5;">
+                        <i data-lucide="calendar" style="width: 32px; height: 32px;"></i>
+                        <span>Equipos por definir</span>
                     </div>
                 `;
             } else {
-                const gl = pred ? pred.goles_local : "-";
-                const gv = pred ? pred.goles_visitante : "-";
-                const hasApuesta = pred !== undefined;
+                const sortedPhaseMatches = phaseMatches.sort((a, b) => new Date(a.fecha_hora) - new Date(b.fecha_hora));
+                
+                finalHTML += `<div style="display: flex; flex-direction: column; gap: 8px;">`;
+                
+                sortedPhaseMatches.forEach(match => {
+                    const localTeam = match.equipo_local || { nombre: "Local", siglas: "LOC", codigo_iso: "unknown" };
+                    const visitTeam = match.equipo_visitante || { nombre: "Visitante", siglas: "VIS", codigo_iso: "unknown" };
 
-                if (isFinished && hasApuesta) {
-                    const pts = pred.puntos_ganados || 0;
-                    pointsEarnedLabel = pts === 3 ? `<span class="badge badge-gold" style="font-size:0.6rem;">+3 pts (Exacto)</span>` :
-                        pts === 1 ? `<span class="badge badge-info" style="font-size:0.6rem;">+1 pt (Resultado)</span>` :
-                            `<span class="badge badge-danger" style="font-size:0.6rem;">0 pts</span>`;
-                } else if (isFinished && !hasApuesta) {
-                    pointsEarnedLabel = `<span class="badge badge-danger" style="font-size:0.6rem;">0 pts</span>`;
-                }
+                    const matchDate = new Date(match.fecha_hora);
+                    const isStarted = matchDate <= AppState.currentDate;
+                    const isFinished = match.goles_local !== null && match.goles_visitante !== null;
 
-                cardBody = `
-                    <div class="mini-card-teams">
-                        <div class="mini-team-info">
-                            <img class="mini-flag" src="https://flagcdn.com/${localTeam.codigo_iso}.svg" alt="">
-                            <span>${localTeam.siglas}</span>
+                    const pred = rawPreds.find(p => p.partido_id === match.id);
+
+                    let cardBody = "";
+                    let pointsEarnedLabel = "";
+
+                    if (!isStarted && !isMe) {
+                        cardBody = `
+                            <div class="mini-card-teams">
+                                <div class="mini-team-info">
+                                    <img class="mini-flag" src="https://flagcdn.com/${localTeam.codigo_iso}.svg" alt="">
+                                    <span>${localTeam.siglas}</span>
+                                </div>
+                                <div class="mini-secret-lock">
+                                    <i data-lucide="lock" style="width: 15px; height: 15px;"></i>
+                                </div>
+                                <div class="mini-team-info">
+                                    <span>${visitTeam.siglas}</span>
+                                    <img class="mini-flag" src="https://flagcdn.com/${visitTeam.codigo_iso}.svg" alt="">
+                                </div>
+                            </div>
+                        `;
+                    } else {
+                        const gl = pred ? pred.goles_local : "-";
+                        const gv = pred ? pred.goles_visitante : "-";
+                        const hasApuesta = pred !== undefined;
+
+                        if (isFinished && hasApuesta) {
+                            const pts = pred.puntos_ganados || 0;
+                            pointsEarnedLabel = pts === 3 ? `<span class="badge badge-gold" style="font-size:0.6rem;">+3 pts (Exacto)</span>` :
+                                pts === 1 ? `<span class="badge badge-info" style="font-size:0.6rem;">+1 pt (Resultado)</span>` :
+                                    `<span class="badge badge-danger" style="font-size:0.6rem;">0 pts</span>`;
+                        } else if (isFinished && !hasApuesta) {
+                            pointsEarnedLabel = `<span class="badge badge-danger" style="font-size:0.6rem;">0 pts</span>`;
+                        }
+
+                        cardBody = `
+                            <div class="mini-card-teams">
+                                <div class="mini-team-info">
+                                    <img class="mini-flag" src="https://flagcdn.com/${localTeam.codigo_iso}.svg" alt="">
+                                    <span>${localTeam.siglas}</span>
+                                </div>
+                                <div style="display:flex; align-items:center; gap:6px;">
+                                    <span class="mini-score-val">${gl}</span>
+                                    <span style="font-weight:700; color:var(--text-muted);">:</span>
+                                    <span class="mini-score-val">${gv}</span>
+                                </div>
+                                <div class="mini-team-info">
+                                    <span>${visitTeam.siglas}</span>
+                                    <img class="mini-flag" src="https://flagcdn.com/${visitTeam.codigo_iso}.svg" alt="">
+                                </div>
+                            </div>
+                        `;
+                    }
+
+                    const faseText = match.fase || 'Fase de Grupos';
+                    
+                    finalHTML += `
+                        <div class="mini-prediction-card">
+                            <div class="mini-card-header">
+                                <span>${faseText === 'Fase de Grupos' ? 'Grupo ' + (localTeam.grupo || 'A') : faseText}</span>
+                                ${pointsEarnedLabel}
+                            </div>
+                            ${cardBody}
                         </div>
-                        <div style="display:flex; align-items:center; gap:6px;">
-                            <span class="mini-score-val">${gl}</span>
-                            <span style="font-weight:700; color:var(--text-muted);">:</span>
-                            <span class="mini-score-val">${gv}</span>
-                        </div>
-                        <div class="mini-team-info">
-                            <span>${visitTeam.siglas}</span>
-                            <img class="mini-flag" src="https://flagcdn.com/${visitTeam.codigo_iso}.svg" alt="">
-                        </div>
-                    </div>
-                `;
+                    `;
+                });
+                
+                finalHTML += `</div>`;
             }
-
-            const faseText = match.fase || 'Fase de Grupos';
-
-            const card = document.createElement("div");
-            card.className = "mini-prediction-card";
-            card.innerHTML = `
-                <div class="mini-card-header">
-                    <span>${faseText === 'Fase de Grupos' ? 'Grupo ' + (localTeam.grupo || 'A') : faseText}</span>
-                    ${pointsEarnedLabel}
-                </div>
-                ${cardBody}
-            `;
-            listContainer.appendChild(card);
+            finalHTML += `</div>`;
         });
+        
+        listContainer.innerHTML = finalHTML;
 
         if (typeof lucide !== 'undefined') {
             lucide.createIcons();
@@ -369,3 +424,4 @@ function showToast(title, message, type = "info") {
         setTimeout(() => toast.remove(), 400);
     }, 5000);
 }
+
