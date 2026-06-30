@@ -168,10 +168,13 @@ function switchTab(tabId) {
 
     AppState.activeTab = tabId;
 
-    if (tabId === 'tab-grupos' || tabId === 'tab-eliminatoria') {
+    if (tabId === 'tab-grupos') {
         // La carga se hizo al inicio, pero por si acaso re-renderizamos.
         renderMatches();
-        renderBracket();
+    } else if (tabId === 'tab-16avos') {
+        render16avos();
+    } else if (tabId === 'tab-octavos') {
+        renderOctavos();
     } else if (tabId === 'tab-leaderboard') {
         loadLeaderboardData();
     }
@@ -251,7 +254,7 @@ async function loadQuinielaData() {
 
         // Inyectar en ambas vistas
         renderMatches();
-        renderBracket();
+        render16avos();
 
     } catch (err) {
         console.error("Error al cargar quiniela:", err);
@@ -468,12 +471,26 @@ function loadMoreMatches() {
 }
 
 // ==========================================================================
-// RENDERIZADO: BRACKET (16AVOS)
+// RENDERIZADO DE BRACKETS ELIMINATORIA
 // ==========================================================================
-
-function renderBracket() {
-    const leftWing = document.getElementById("bracket-left-wing");
-    const rightWing = document.getElementById("bracket-right-wing");
+function buildWingMatches(container, wingMatches, startIndex) {
+    for (let i = 0; i < wingMatches.length; i += 2) {
+        const matchupDiv = document.createElement("div");
+        matchupDiv.className = "bracket-matchup";
+        
+        const m1 = wingMatches[i];
+        const m2 = wingMatches[i+1];
+        
+        if (m1) matchupDiv.appendChild(createStandardMatchCard(m1, startIndex + i));
+        if (m2) matchupDiv.appendChild(createStandardMatchCard(m2, startIndex + i + 1));
+        
+        container.appendChild(matchupDiv);
+    }
+}
+// ========================  16AVOS  ========================
+function render16avos() {
+    const leftWing = document.getElementById("bracket-left-16avos");
+    const rightWing = document.getElementById("bracket-right-16avos");
     
     if (!leftWing || !rightWing) return;
 
@@ -494,44 +511,36 @@ function renderBracket() {
     // Los siguientes 8 van al ala derecha
     buildWingMatches(rightWing, elimMatches.slice(8, 16), 9);
     
-    // Inyectar Octavos si existen las columnas (para prueba)
-    const leftOctavos = document.getElementById('bracket-left-octavos');
-    const rightOctavos = document.getElementById('bracket-right-octavos');
-    if (leftOctavos && rightOctavos) {
-        leftOctavos.innerHTML = '<h3 class="bracket-column-title">Octavos</h3>';
-        rightOctavos.innerHTML = '<h3 class="bracket-column-title">Octavos</h3>';
-        const dummyMatch = { id: 999, fase: 'Octavos', fecha_hora: new Date(Date.now() + 864000000).toISOString(), equipo_local: { nombre: 'Por Definir', siglas: 'TBD', codigo_iso: 'unknown' }, equipo_visitante: { nombre: 'Por Definir', siglas: 'TBD', codigo_iso: 'unknown' }, goles_local: null, goles_visitante: null };
-        for (let i = 0; i < 4; i += 2) {
-            const mDiv = document.createElement('div');
-            mDiv.className = 'bracket-matchup';
-            mDiv.appendChild(createStandardMatchCard({...dummyMatch, id: 900+i, equipo_local: {nombre: 'Ganador L'+(1+i), siglas: 'W'+(1+i), codigo_iso: 'unknown'}, equipo_visitante: {nombre: 'Ganador L'+(2+i), siglas: 'W'+(2+i), codigo_iso: 'unknown'}}, 900+i));
-            mDiv.appendChild(createStandardMatchCard({...dummyMatch, id: 901+i, equipo_local: {nombre: 'Ganador L'+(3+i), siglas: 'W'+(3+i), codigo_iso: 'unknown'}, equipo_visitante: {nombre: 'Ganador L'+(4+i), siglas: 'W'+(4+i), codigo_iso: 'unknown'}}, 901+i));
-            leftOctavos.appendChild(mDiv);
-        }
-        for (let i = 0; i < 4; i += 2) {
-            const mDiv = document.createElement('div');
-            mDiv.className = 'bracket-matchup';
-            mDiv.appendChild(createStandardMatchCard({...dummyMatch, id: 910+i, equipo_local: {nombre: 'Ganador L'+(9+i), siglas: 'W'+(9+i), codigo_iso: 'unknown'}, equipo_visitante: {nombre: 'Ganador L'+(10+i), siglas: 'W'+(10+i), codigo_iso: 'unknown'}}, 910+i));
-            mDiv.appendChild(createStandardMatchCard({...dummyMatch, id: 911+i, equipo_local: {nombre: 'Ganador L'+(11+i), siglas: 'W'+(11+i), codigo_iso: 'unknown'}, equipo_visitante: {nombre: 'Ganador L'+(12+i), siglas: 'W'+(12+i), codigo_iso: 'unknown'}}, 911+i));
-            rightOctavos.appendChild(mDiv);
-        }
-    }
 }
+// ========================  OCTAVOS  ========================
+function renderOctavos() {
+    const leftWing = document.getElementById("bracket-left-octavos");
+    const rightWing = document.getElementById("bracket-right-octavos");
+    
+    if (!leftWing || !rightWing) return;
 
-function buildWingMatches(container, wingMatches, startIndex) {
-    for (let i = 0; i < wingMatches.length; i += 2) {
-        const matchupDiv = document.createElement("div");
-        matchupDiv.className = "bracket-matchup";
-        
-        const m1 = wingMatches[i];
-        const m2 = wingMatches[i+1];
-        
-        if (m1) matchupDiv.appendChild(createStandardMatchCard(m1, startIndex + i));
-        if (m2) matchupDiv.appendChild(createStandardMatchCard(m2, startIndex + i + 1));
-        
-        container.appendChild(matchupDiv);
-    }
+    leftWing.querySelectorAll('.bracket-matchup').forEach(e => e.remove());
+    rightWing.querySelectorAll('.bracket-matchup').forEach(e => e.remove());
+
+    const elimMatches = AppState.matches
+        .filter(m => m.fase === 'Octavos')
+        .sort((a, b) => {
+            const numA = a.numero_partido || 0;
+            const numB = b.numero_partido || 0;
+            return numA - numB;
+        });
+    
+    // Los primeros 8 partidos van al ala izquierda
+    buildWingMatches(leftWing, elimMatches.slice(0, 4), 1);
+    
+    // Los siguientes 8 van al ala derecha
+    buildWingMatches(rightWing, elimMatches.slice(4, 8), 5);
+    
 }
+// ========================  CUARTOS  ========================
+// ========================  SEMIFINALES  ========================
+// ========================  FINAL y TERCER LUGAR  ========================
+
 
 // ==========================================================================
 // GUARDAR PREDICCIONES
