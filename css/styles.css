@@ -639,9 +639,11 @@ h1, h2, h3, h4, h5, h6 {
     background: var(--primary);
     box-shadow: 0 4px 12px var(--primary-glow);
 }
-.nav-tab i {
+.nav-tab i,
+.nav-tab svg {
     width: 18px;
     height: 18px;
+    flex-shrink: 0;
 }
 
 .app-main-content {
@@ -1132,7 +1134,7 @@ h1, h2, h3, h4, h5, h6 {
     }
 }
 
-/* SOBREESCRIBIR PARA SUPER REDUCIR EN MÓVIL Y EVITAR OVERFLOW */
+/* SOBREESCRIBIR PARA SUPER REDUCIR EN Mï¿½VIL Y EVITAR OVERFLOW */
 @media (max-width: 768px) {
     .match-versus-area {
         gap: 2px !important;
@@ -1164,7 +1166,7 @@ h1, h2, h3, h4, h5, h6 {
     }
 }
 
-/* REDUCIR TABS MÓVIL Y QUITAR ICONOS */
+/* REDUCIR TABS Mï¿½VIL Y QUITAR ICONOS */
 @media (max-width: 768px) {
     .nav-tab {
         padding: 0.5rem 0.6rem !important;
@@ -1175,6 +1177,7 @@ h1, h2, h3, h4, h5, h6 {
         display: none !important;
     }
 }
+
 
 
 
