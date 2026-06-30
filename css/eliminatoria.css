@@ -68,7 +68,7 @@
     width: 100%;
     overflow-x: auto;
     overflow-y: hidden;
-    padding: 20px 0 60px 0;
+    padding: 20px 20px 60px 20px;
     -webkit-overflow-scrolling: touch;
 }
 
@@ -97,8 +97,9 @@
     gap: 1.5vw;
     min-height: 80vh;
     align-items: stretch;
-    width: 100%;
+    min-width: max-content;
     margin: 0 auto;
+    padding: 0 20px;
 }
 
 .left-wing,
@@ -406,3 +407,4 @@
         font-size: 0.6rem;
     }
 }
+

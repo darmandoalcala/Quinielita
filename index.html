@@ -57,9 +57,13 @@
                 <i data-lucide="calendar"></i>
                 <span>Fase de Grupos</span>
             </button>
-            <button class="nav-tab active" data-tab="tab-eliminatoria">
+            <button class="nav-tab active" data-tab="tab-16avos">
                 <i data-lucide="swords"></i>
-                <span>Eliminatoria</span>
+                <span>16avos</span>
+            </button>
+            <button class="nav-tab" data-tab="tab-octavos">
+                <i data-lucide="swords"></i>
+                <span>Octavos</span>
             </button>
             <button class="nav-tab" data-tab="tab-leaderboard">
                 <i data-lucide="trophy"></i>
@@ -120,8 +124,8 @@
                 </div>
             </section>
 
-            <!-- TAB 2: ELIMINATORIA -->
-            <section id="tab-eliminatoria" class="tab-content active" style="padding-bottom: 4rem;">
+            <!-- TAB 2: 16AVOS -->
+            <section id="tab-16avos" class="tab-content active" style="padding-bottom: 4rem;">
                 <div class="tab-header-flex">
                     <div class="section-title">
                         <h2>16avos de Final</h2>
@@ -145,7 +149,7 @@
                 <div class="converging-bracket-wrapper" id="pronosticos-container">
                     <div class="converging-bracket">
                         <div class="left-wing">
-                            <div class="bracket-col" id="bracket-left-wing">
+                            <div class="bracket-col" id="bracket-left-16avos">
                                 <h3 class="bracket-column-title">16avos</h3>
                                 <!-- Los partidos L1 a L8 se inyectarán dinámicamente aquí -->
                             </div>
@@ -153,7 +157,7 @@
                         <div class="center-final" id="center-trophy-container" style="display: flex; align-items: center; justify-content: center; width: 30vw; min-width: 150px; position: relative;">
                         </div>
                         <div class="right-wing">
-                            <div class="bracket-col" id="bracket-right-wing">
+                            <div class="bracket-col" id="bracket-right-16avos">
                                 <h3 class="bracket-column-title">16avos</h3>
                                 <!-- Los partidos L9 a L16 se inyectarán dinámicamente aquí -->
                             </div>
@@ -162,7 +166,49 @@
                 </div>
             </section>
 
-            <!-- TAB 3: LEADERBOARD -->
+            <!-- TAB 3: OCTAVOS -->
+             <section id="tab-octavos" class="tab-content" style="padding-bottom: 4rem;">
+                <div class="tab-header-flex">
+                    <div class="section-title">
+                        <h2>Octavos de Final</h2>
+                        <div style="display: flex; flex-direction: column; align-items: center; gap: 10px;">
+                            <div style="background: rgba(234, 179, 8, 0.3); border: 1px solid rgba(234, 179, 8, 0.5); border-left: 4px solid #eab308; padding: 8px; border-radius: 10px; display: inline-flex; align-items: flex-start; gap: 10px; max-width: 500px; text-align: left; margin: 0 auto;">
+                                <i data-lucide="info" style="color: #eab308; width: 20px; height: 20px; flex-shrink: 0; margin-top: 2px;"></i>
+                                <p style="margin: 0; font-size: 0.85rem; color: var(--text-main); line-height: 1.4;">
+                                    <strong>Importante:</strong><br> El marcador que pronostiques debe corresponder <strong>únicamente al tiempo regular (90 min + compensación)</strong>.
+                                </p>
+                            </div>
+                            <div style="background: rgba(234, 8, 8, 0.3); border: 1px solid rgba(234, 8, 8, 0.5); border-left: 4px solid #ea0808; padding: 8px; border-radius: 10px; display: inline-flex; align-items: flex-start; gap: 10px; max-width: 500px; text-align: left; margin: 0 auto;">
+                                <i data-lucide="info" style="color: #ea0808; width: 20px; height: 20px; flex-shrink: 0; margin-top: 2px;"></i>
+                                <p style="margin: 0; font-size: 0.85rem; color: var(--text-main); line-height: 1.4;">
+                                    <strong>No </strong> se tomarán en cuenta goles en tiempos extras ni penales.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="converging-bracket-wrapper" id="pronosticos-container">
+                    <div class="converging-bracket">
+                        <div class="left-wing">
+                            <div class="bracket-col" id="bracket-left-octavos">
+                                <h3 class="bracket-column-title">Octavos</h3>
+                                <!-- Los partidos L1 a L8 se inyectarán dinámicamente aquí -->
+                            </div>
+                        </div>
+                        <div class="center-final" id="center-trophy-container" style="display: flex; align-items: center; justify-content: center; width: 30vw; min-width: 150px; position: relative;">
+                        </div>
+                        <div class="right-wing">
+                            <div class="bracket-col" id="bracket-right-octavos">
+                                <h3 class="bracket-column-title">Octavos</h3>
+                                <!-- Los partidos L9 a L16 se inyectarán dinámicamente aquí -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+             </section>
+
+            <!-- TAB: LEADERBOARD -->
             <section id="tab-leaderboard" class="tab-content">
                 <div class="section-title">
                     <h2>Tabla de Posiciones</h2>
