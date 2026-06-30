@@ -29,7 +29,7 @@ async function initApp() {
 
     try {
         const { data: { session }, error } = await window.supabaseClient.auth.getSession();
-        
+
         if (error) throw error;
 
         const profileWidget = document.getElementById("header-profile-widget");
@@ -266,7 +266,7 @@ function calculateUserPoints() {
     AppState.predictions.forEach(pred => {
         points += (pred.puntos_ganados || 0);
     });
-    
+
     const ptsIndicator = document.getElementById("user-points");
     if (ptsIndicator) ptsIndicator.textContent = `${points} pts`;
 }
@@ -368,11 +368,11 @@ function createStandardMatchCard(match, index) {
     if (isFinished) {
         const earned = prediction ? (prediction.puntos_ganados || 0) : 0;
         if (prediction) {
-            if (earned === 3) pointsTag = `<div class="points-earned-tag gold">+3 Puntos (Exacto)</div>`;
-            else if (earned === 1) pointsTag = `<div class="points-earned-tag" style="background: #475569; color: white;">+1 Punto (Resultado)</div>`;
-            else pointsTag = `<div class="points-earned-tag" style="background: var(--danger); color: white;">0 Puntos</div>`;
+            if (earned === 3) pointsTag = `<div class="points-earned-tag gold" style="white-space: normal; line-height: 1.1; font-size: 0.65rem; padding: 4px; text-align: center;">+3 Puntos (Exacto)</div>`;
+            else if (earned === 1) pointsTag = `<div class="points-earned-tag" style="white-space: normal; line-height: 1.1; font-size: 0.65rem; padding: 4px; text-align: center; background: #475569; color: white;">+1 Punto (Resultado)</div>`;
+            else pointsTag = `<div class="points-earned-tag" style="white-space: normal; line-height: 1.1; font-size: 0.65rem; padding: 4px; text-align: center; background: var(--danger); color: white;">0 Puntos</div>`;
         } else {
-            pointsTag = `<div class="points-earned-tag" style="background: rgba(255, 255, 255, 0.05); color: var(--text-muted); border: 1px solid var(--border-card);">Sin Apuesta</div>`;
+            pointsTag = `<div class="points-earned-tag" style="white-space: normal; line-height: 1.1; font-size: 0.65rem; padding: 4px; text-align: center; background: rgba(255, 255, 255, 0.05); color: var(--text-muted); border: 1px solid var(--border-card);">Sin Apuesta</div>`;
         }
 
         realScoreBadge = `
@@ -392,12 +392,12 @@ function createStandardMatchCard(match, index) {
 
     const inputsDisabled = isLocked || !AppState.session;
     let footerContent = "";
-    
+
     if (isLocked) {
         footerContent = `
             <div class="prediction-status-locked">
                 <i data-lucide="lock" style="width: 14px; height: 14px;"></i>
-                <span>Apuestas Cerradas</span>
+                <span>Cerrado</span>
             </div>
         `;
     } else if (!AppState.session) {
@@ -477,13 +477,13 @@ function buildWingMatches(container, wingMatches, startIndex) {
     for (let i = 0; i < wingMatches.length; i += 2) {
         const matchupDiv = document.createElement("div");
         matchupDiv.className = "bracket-matchup";
-        
+
         const m1 = wingMatches[i];
-        const m2 = wingMatches[i+1];
-        
+        const m2 = wingMatches[i + 1];
+
         if (m1) matchupDiv.appendChild(createStandardMatchCard(m1, startIndex + i));
         if (m2) matchupDiv.appendChild(createStandardMatchCard(m2, startIndex + i + 1));
-        
+
         container.appendChild(matchupDiv);
     }
 }
@@ -491,7 +491,7 @@ function buildWingMatches(container, wingMatches, startIndex) {
 function render16avos() {
     const leftWing = document.getElementById("bracket-left-16avos");
     const rightWing = document.getElementById("bracket-right-16avos");
-    
+
     if (!leftWing || !rightWing) return;
 
     leftWing.querySelectorAll('.bracket-matchup').forEach(e => e.remove());
@@ -504,19 +504,19 @@ function render16avos() {
             const numB = b.numero_partido || 0;
             return numA - numB;
         });
-    
+
     // Los primeros 8 partidos van al ala izquierda
     buildWingMatches(leftWing, elimMatches.slice(0, 8), 1);
-    
+
     // Los siguientes 8 van al ala derecha
     buildWingMatches(rightWing, elimMatches.slice(8, 16), 9);
-    
+
 }
 // ========================  OCTAVOS  ========================
 function renderOctavos() {
     const leftWing = document.getElementById("bracket-left-octavos");
     const rightWing = document.getElementById("bracket-right-octavos");
-    
+
     if (!leftWing || !rightWing) return;
 
     leftWing.querySelectorAll('.bracket-matchup').forEach(e => e.remove());
@@ -529,13 +529,13 @@ function renderOctavos() {
             const numB = b.numero_partido || 0;
             return numA - numB;
         });
-    
+
     // Los primeros 8 partidos van al ala izquierda
     buildWingMatches(leftWing, elimMatches.slice(0, 4), 1);
-    
+
     // Los siguientes 8 van al ala derecha
     buildWingMatches(rightWing, elimMatches.slice(4, 8), 5);
-    
+
 }
 // ========================  CUARTOS  ========================
 // ========================  SEMIFINALES  ========================
@@ -552,7 +552,7 @@ async function savePrediction(matchId) {
     const glInput = document.getElementById(`score-l-${matchId}`);
     const gvInput = document.getElementById(`score-v-${matchId}`);
     const saveBtn = document.getElementById(`save-btn-${matchId}`); // Para grid groups
-    
+
     if (!glInput || !gvInput) return;
 
     const golesLocal = parseInt(glInput.value);
@@ -592,14 +592,14 @@ async function savePrediction(matchId) {
         if (existingPred) {
             existingPred.goles_local = golesLocal;
             existingPred.goles_visitante = golesVisitante;
-            if(saveBtn) showToast("Pronóstico Actualizado", "Tu marcador ha sido actualizado con éxito.", "success");
+            if (saveBtn) showToast("Pronóstico Actualizado", "Tu marcador ha sido actualizado con éxito.", "success");
         } else {
             if (data && data.length > 0) AppState.predictions.push(data[0]);
-            if(saveBtn) showToast("Apuesta Registrada", "Tu marcador se ha guardado con éxito.", "success");
+            if (saveBtn) showToast("Apuesta Registrada", "Tu marcador se ha guardado con éxito.", "success");
         }
-        
+
         // Refresco visual suave
-        if(saveBtn) {
+        if (saveBtn) {
             renderMatches();
         } else {
             // Animación para bracket (onblur)
@@ -625,7 +625,7 @@ async function savePrediction(matchId) {
                 <i data-lucide="save" style="width: 14px; height: 14px;"></i>
                 <span>${pred ? 'Actualizar' : 'Guardar Apuesta'}</span>
             `;
-            
+
             if (pred) {
                 const footer = saveBtn.closest('.match-footer');
                 if (footer && !footer.querySelector('.prediction-status-saved')) {

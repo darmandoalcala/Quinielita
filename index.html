@@ -19,7 +19,20 @@
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="css/leaderboard.css">
     <link rel="stylesheet" href="css/leaderboard-modal.css">
-    <link rel="stylesheet" href="css/eliminatoria.css">
+    <link rel="stylesheet" href="css/eliminatoria.css?v=1.0.1">
+
+    <!-- ESTILOS CRÍTICOS INYECTADOS PARA EVITAR CACHÉ DEL NAVEGADOR -->
+    <style>
+        .converging-bracket {
+            min-width: max-content !important;
+        }
+        .bracket-col {
+            min-width: 250px !important;
+        }
+        .center-final {
+            max-width: 350px !important;
+        }
+    </style>
 </head>
 
 <body>
@@ -58,7 +71,7 @@
                 <span>Fase de Grupos</span>
             </button>
             <button class="nav-tab active" data-tab="tab-16avos">
-                <i data-lucide="swords"></i>
+                <i data-lucide="versus"></i>
                 <span>16avos</span>
             </button>
             <button class="nav-tab" data-tab="tab-octavos">
