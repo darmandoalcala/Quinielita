@@ -411,3 +411,31 @@
 }
 
 
+
+/* Reglas modulares para mensajes de alerta en eliminatorias */
+.alert-knockout {
+    background: rgba(234, 179, 8, 0.3);
+    border: 1px solid rgba(234, 179, 8, 0.5);
+    border-left: 4px solid #eab308;
+    padding: 10px 14px;
+    border-radius: 10px;
+    display: inline-flex;
+    align-items: flex-start;
+    gap: 12px;
+    max-width: 600px;
+    text-align: left;
+    margin: 0 auto;
+}
+.alert-knockout p {
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--text-main);
+    line-height: 1.5;
+}
+.alert-knockout i {
+    color: #eab308;
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    margin-top: 2px;
+}

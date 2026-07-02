@@ -175,6 +175,12 @@ function switchTab(tabId) {
         render16avos();
     } else if (tabId === 'tab-octavos') {
         renderOctavos();
+    } else if (tabId === 'tab-cuartos') {
+        renderCuartos();
+    } else if (tabId === 'tab-semifinales') {
+        renderSemifinales();
+    } else if (tabId === 'tab-final') {
+        renderFinal();
     } else if (tabId === 'tab-leaderboard') {
         loadLeaderboardData();
     }
@@ -538,8 +544,80 @@ function renderOctavos() {
 
 }
 // ========================  CUARTOS  ========================
+function renderCuartos() {
+    const leftWing = document.getElementById("bracket-left-cuartos");
+    const rightWing = document.getElementById("bracket-right-cuartos");
+
+    if (!leftWing || !rightWing) return;
+
+    leftWing.querySelectorAll('.bracket-matchup').forEach(e => e.remove());
+    rightWing.querySelectorAll('.bracket-matchup').forEach(e => e.remove());
+
+    const elimMatches = AppState.matches
+        .filter(m => m.fase === 'Cuartos')
+        .sort((a, b) => {
+            const numA = a.numero_partido || 0;
+            const numB = b.numero_partido || 0;
+            return numA - numB;
+        });
+
+    // Los primeros 2 partidos van al ala izquierda
+    buildWingMatches(leftWing, elimMatches.slice(0, 2), 1);
+
+    // Los siguientes 2 van al ala derecha
+    buildWingMatches(rightWing, elimMatches.slice(2, 4), 5);
+
+}
 // ========================  SEMIFINALES  ========================
+function renderSemifinales() {
+    const leftWing = document.getElementById("bracket-left-semifinales");
+    const rightWing = document.getElementById("bracket-right-semifinales");
+
+    if (!leftWing || !rightWing) return;
+
+    leftWing.querySelectorAll('.bracket-matchup').forEach(e => e.remove());
+    rightWing.querySelectorAll('.bracket-matchup').forEach(e => e.remove());
+
+    const elimMatches = AppState.matches
+        .filter(m => m.fase === 'Semifinales')
+        .sort((a, b) => {
+            const numA = a.numero_partido || 0;
+            const numB = b.numero_partido || 0;
+            return numA - numB;
+        });
+
+    // El primer partido a la izquierda
+    buildWingMatches(leftWing, elimMatches.slice(0, 1), 1);
+
+    // El segundo partido a la derecha
+    buildWingMatches(rightWing, elimMatches.slice(1, 2), 2);
+
+}
 // ========================  FINAL y TERCER LUGAR  ========================
+function renderFinal() {
+    const leftWing = document.getElementById("bracket-left-final");
+    const rightWing = document.getElementById("bracket-right-final");
+
+    if (!leftWing || !rightWing) return;
+
+    leftWing.querySelectorAll('.bracket-matchup').forEach(e => e.remove());
+    rightWing.querySelectorAll('.bracket-matchup').forEach(e => e.remove());
+
+    const elimMatches = AppState.matches
+        .filter(m => m.fase === 'Final')
+        .sort((a, b) => {
+            const numA = a.numero_partido || 0;
+            const numB = b.numero_partido || 0;
+            return numA - numB;
+        });
+
+    // Los primeros 8 partidos van al ala izquierda
+    buildWingMatches(leftWing, elimMatches.slice(0, 1), 1);
+
+    // Los siguientes 8 van al ala derecha
+    buildWingMatches(rightWing, elimMatches.slice(1, 2), 2);
+
+}
 
 
 // ==========================================================================
