@@ -160,103 +160,7 @@
     min-height: 150px;
 }
 
-/* COMPACT MATCH CARD */
-.compact-match-card {
-    width: 100%;
-    margin: 0;
-    position: relative;
-    z-index: 2;
-    background: var(--bg-card);
-    border: 1px solid var(--border-card);
-    border-radius: 8px;
-    padding: 8px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-}
 
-.compact-team-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.compact-team-info {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    overflow: hidden;
-}
-
-.compact-team-info .flag-wrapper {
-    width: 18px;
-    height: 12px;
-    background: #333;
-    border-radius: 2px;
-    overflow: hidden;
-    flex-shrink: 0;
-}
-
-.compact-team-info .flag-img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.compact-team-info .team-name {
-    font-size: 0.75vw;
-    font-weight: 600;
-    color: var(--text-main);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.compact-score-input {
-    width: 2vw;
-    min-width: 20px;
-    height: 24px;
-    background: rgba(0, 0, 0, 0.5);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    color: white;
-    text-align: center;
-    border-radius: 4px;
-    font-weight: 700;
-    font-size: 0.8vw;
-    padding: 0;
-    flex-shrink: 0;
-}
-
-.compact-score-input:focus {
-    border-color: var(--primary);
-    outline: none;
-}
-
-.compact-score-input:disabled {
-    opacity: 0.5;
-}
-
-.compact-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 0.65vw;
-    color: var(--text-muted);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    padding-bottom: 4px;
-}
-
-.compact-header .match-group {
-    color: var(--accent-gold);
-    font-weight: 700;
-    white-space: nowrap;
-}
-.compact-header .match-time {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
 
 /* --- CONNECTORS CSS --- */
 .left-wing .bracket-col:not(:first-child) .bracket-match .match-card::before {
@@ -402,11 +306,19 @@
         min-width: 40px !important;
         width: 40px !important;
     }
+    /*
     .center-final img {
-        width: 100% !important; /* El trofeo se adapta */
+        width: 100% !important; 
     }
+    */
     .match-time {
-        font-size: 0.6rem;
+        font-size: 0.4rem;
+    }
+    .alert-knockout p{
+        font-size: 0.5rem !important;
+    }
+    .converging-bracket-wrapper {
+        padding: 5px 5px 5px 5px;
     }
 }
 
