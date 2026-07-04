@@ -1,4 +1,4 @@
-// Estado Global de la Aplicación
+// Estado Global de la AplicaciÃ³n
 const AppState = {
     session: null,
     userProfile: null,
@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", () => {
     setupEventListeners();
 });
 
-// Inicializar Aplicación (Sesión Compartida)
+// Inicializar AplicaciÃ³n (SesiÃ³n Compartida)
 async function initApp() {
     showScreen('loading-screen');
 
@@ -49,7 +49,7 @@ async function initApp() {
                             </div>
                         </div>
                         <div class="profile-actions">
-                            <button id="logout-btn" class="btn-icon danger" title="Cerrar Sesión" onclick="handleLogout()">
+                            <button id="logout-btn" class="btn-icon danger" title="Cerrar SesiÃ³n" onclick="handleLogout()">
                                 <i data-lucide="log-out"></i>
                             </button>
                         </div>
@@ -76,7 +76,7 @@ async function initApp() {
         window.dispatchEvent(new Event('scroll'));
 
     } catch (err) {
-        console.error("Error en inicialización de app:", err);
+        console.error("Error en inicializaciÃ³n de app:", err);
         setupAnonymousHeader();
         await loadQuinielaData();
         showScreen('dashboard-screen');
@@ -92,7 +92,7 @@ function setupAnonymousHeader() {
         profileWidget.innerHTML = `
             <a href="login/index.html" class="btn btn-primary btn-sm" style="text-decoration:none; gap:6px;">
                 <i data-lucide="log-in" style="width:14px; height:14px;"></i>
-                <span>Iniciar Sesión</span>
+                <span>Iniciar SesiÃ³n</span>
             </a>
         `;
     }
@@ -108,11 +108,11 @@ function showScreen(screenId) {
 }
 
 // ==========================================================================
-// PESTAÑAS (SPA)
+// PESTAÃ‘AS (SPA)
 // ==========================================================================
 
 function setupEventListeners() {
-    // Navegación de Pestañas
+    // NavegaciÃ³n de PestaÃ±as
     const tabs = document.querySelectorAll(".nav-tab");
     tabs.forEach(tab => {
         tab.addEventListener("click", (e) => {
@@ -159,7 +159,7 @@ function switchTab(tabId) {
         targetSection.classList.add("active");
         if (tabId === "tab-eliminatoria") {
             targetSection.style.display = "block";
-            // Forzar reflow para animación
+            // Forzar reflow para animaciÃ³n
             void targetSection.offsetWidth;
             targetSection.style.opacity = "1";
             targetSection.style.transform = "translateY(0)";
@@ -179,7 +179,6 @@ function switchTab(tabId) {
         renderCuartos();
     } else if (tabId === 'tab-semifinales') {
         renderSemifinales();
-    } else if (tabId === 'tab-final') {
         renderFinal();
     } else if (tabId === 'tab-leaderboard') {
         loadLeaderboardData();
@@ -189,7 +188,7 @@ function switchTab(tabId) {
 }
 
 // ==========================================================================
-// AUTENTICACIÓN
+// AUTENTICACIÃ“N
 // ==========================================================================
 
 async function fetchUserProfile(userId) {
@@ -214,7 +213,7 @@ async function handleLogout() {
         await window.supabaseClient.auth.signOut();
         window.location.reload();
     } catch (err) {
-        console.error("Error al cerrar sesión:", err);
+        console.error("Error al cerrar sesiÃ³n:", err);
         window.location.reload();
     }
 }
@@ -316,7 +315,7 @@ function renderMatches() {
         let icon = "info";
 
         if (statusFilter === "Pendiente") {
-            title = "¡Fase de Grupos Concluida!";
+            title = "Â¡Fase de Grupos Concluida!";
             msg = "Ya no hay partidos pendientes. Cambia el filtro superior a <strong>'Finalizados'</strong> para ver los resultados de esta fase.";
             icon = "check-circle-2";
         }
@@ -346,7 +345,7 @@ function renderMatches() {
             <div class="load-more-divider"></div>
             <button class="load-more-btn" id="load-more-matches-btn" onclick="loadMoreMatches()">
                 <i data-lucide="chevrons-down" style="width: 18px; height: 18px;"></i>
-                <span>Cargar más partidos</span>
+                <span>Cargar mÃ¡s partidos</span>
                 <span class="load-more-count">${remaining} restante${remaining !== 1 ? 's' : ''}</span>
             </button>
             <p class="load-more-hint">Mostrando ${visibleMatches.length} de ${filteredMatches.length} partidos</p>
@@ -463,7 +462,7 @@ function createStandardMatchCard(match, index) {
             ${footerContent}
             ${prediction && !isLocked && AppState.session ? `
                 <span class="prediction-status-saved">
-                    <i data-lucide="check-circle" style="width: 12px; height: 12px;"></i> Pronóstico Guardado
+                    <i data-lucide="check-circle" style="width: 12px; height: 12px;"></i> PronÃ³stico Guardado
                 </span>
             ` : ''}
         </div>
@@ -604,7 +603,7 @@ function renderFinal() {
     rightWing.querySelectorAll('.bracket-matchup').forEach(e => e.remove());
 
     const elimMatches = AppState.matches
-        .filter(m => m.fase === 'Final')
+        .filter(m => m.fase === 'Final' || m.fase === 'Tercer Puesto')
         .sort((a, b) => {
             const numA = a.numero_partido || 0;
             const numB = b.numero_partido || 0;
@@ -637,7 +636,7 @@ async function savePrediction(matchId) {
     const golesVisitante = parseInt(gvInput.value);
 
     if (isNaN(golesLocal) || isNaN(golesVisitante)) {
-        if (saveBtn) showToast("Marcador Incompleto", "Ingresa ambos marcadores para guardar tu pronóstico.", "error");
+        if (saveBtn) showToast("Marcador Incompleto", "Ingresa ambos marcadores para guardar tu pronÃ³stico.", "error");
         return;
     }
 
@@ -670,29 +669,29 @@ async function savePrediction(matchId) {
         if (existingPred) {
             existingPred.goles_local = golesLocal;
             existingPred.goles_visitante = golesVisitante;
-            if (saveBtn) showToast("Pronóstico Actualizado", "Tu marcador ha sido actualizado con éxito.", "success");
+            if (saveBtn) showToast("PronÃ³stico Actualizado", "Tu marcador ha sido actualizado con Ã©xito.", "success");
         } else {
             if (data && data.length > 0) AppState.predictions.push(data[0]);
-            if (saveBtn) showToast("Apuesta Registrada", "Tu marcador se ha guardado con éxito.", "success");
+            if (saveBtn) showToast("Apuesta Registrada", "Tu marcador se ha guardado con Ã©xito.", "success");
         }
 
         // Refresco visual suave
         if (saveBtn) {
             renderMatches();
         } else {
-            // Animación para bracket (onblur)
+            // AnimaciÃ³n para bracket (onblur)
             glInput.style.backgroundColor = 'rgba(132, 197, 76, 0.2)';
             gvInput.style.backgroundColor = 'rgba(132, 197, 76, 0.2)';
             setTimeout(() => { glInput.style.backgroundColor = ''; gvInput.style.backgroundColor = ''; }, 1000);
         }
 
     } catch (err) {
-        console.error("Error al guardar predicción:", err);
+        console.error("Error al guardar predicciÃ³n:", err);
         const isClosedError = err.message?.includes("row-level security policy") || err.message?.includes("candado") || err.message?.includes("comenzado");
         if (isClosedError) {
-            showToast("¡Tiempo Límite Expirado!", "Este partido ya ha comenzado en el servidor y las apuestas están cerradas.", "error");
+            showToast("Â¡Tiempo LÃ­mite Expirado!", "Este partido ya ha comenzado en el servidor y las apuestas estÃ¡n cerradas.", "error");
         } else {
-            showToast("Error al Guardar", "No se pudo guardar el pronóstico.", "error");
+            showToast("Error al Guardar", "No se pudo guardar el pronÃ³stico.", "error");
         }
         loadQuinielaData();
     } finally {
@@ -709,7 +708,7 @@ async function savePrediction(matchId) {
                 if (footer && !footer.querySelector('.prediction-status-saved')) {
                     const span = document.createElement('span');
                     span.className = 'prediction-status-saved';
-                    span.innerHTML = '<i data-lucide="check-circle" style="width: 12px; height: 12px;"></i> Pronóstico Guardado';
+                    span.innerHTML = '<i data-lucide="check-circle" style="width: 12px; height: 12px;"></i> PronÃ³stico Guardado';
                     footer.insertBefore(span, saveBtn);
                 }
             }
@@ -717,4 +716,5 @@ async function savePrediction(matchId) {
         }
     }
 }
+
 
