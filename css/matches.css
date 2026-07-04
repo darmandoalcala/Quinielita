@@ -411,9 +411,11 @@
         flex-direction: row !important;
         justify-content: space-between !important;
         align-items: center !important;
+        padding: 0 !important;
         gap: 2px !important;
         margin-top: 0px !important;
-        height: 24px !important;
+        min-height: 28px !important;
+        height: auto !important;
     }
 
     .save-prediction-btn {
@@ -463,3 +465,53 @@
     }
 
 }
+.trophy-static {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Custom lines for Semis y Final Tab */
+#tab-semifinales .converging-bracket {
+    align-items: flex-start;
+}
+#bracket-left-semifinales .bracket-matchup {
+    position: relative;
+}
+#bracket-left-semifinales .bracket-matchup::after {
+    content: '';
+    position: absolute;
+    right: -4vw;
+    top: 50%;
+    width: 4vw;
+    height: 180px;
+    border-top: 2px solid rgba(255, 255, 255, 0.2);
+    border-right: 2px solid rgba(255, 255, 255, 0.2);
+    border-top-right-radius: 6px;
+    border-bottom-right-radius: 6px;
+    z-index: 0;
+}
+
+#bracket-right-semifinales .bracket-matchup {
+    position: relative;
+}
+#bracket-right-semifinales .bracket-matchup::after {
+    content: '';
+    position: absolute;
+    left: -4vw;
+    top: 50%;
+    width: 4vw;
+    height: 180px;
+    border-top: 2px solid rgba(255, 255, 255, 0.2);
+    border-left: 2px solid rgba(255, 255, 255, 0.2);
+    border-top-left-radius: 6px;
+    border-bottom-left-radius: 6px;
+    z-index: 0;
+}
+
+#bracket-right-final .bracket-matchup::before,
+#bracket-right-final .bracket-matchup::after,
+#bracket-left-final .bracket-matchup::before,
+#bracket-left-final .bracket-matchup::after {
+    display: none !important;
+}
+
