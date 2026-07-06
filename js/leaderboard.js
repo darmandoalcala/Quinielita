@@ -148,7 +148,12 @@ async function viewPlayerPredictions(playerUserId) {
         // Genera LINEA DEL TIEMPO PARA MULTIPLES FASES
         const phasesToTimeline = [
             { id: "Fase de Grupos", label: "Fase de Grupos", totalMatches: 72 },
-            { id: "16avos", label: "16avos de Final", totalMatches: 16 }
+            { id: "16avos", label: "16avos de Final", totalMatches: 16 },
+            { id: "Octavos", label: "Octavos de Final", totalMatches: 8 },
+            { id: "Cuartos", label: "Cuartos de Final", totalMatches: 4 },
+            { id: "Semifinales", label: "Semifinales", totalMatches: 2 },
+            { id: "Tercer lugar", label: "Tercer Puesto", totalMatches: 1 },
+            { id: "Final", label: "Final", totalMatches: 1 }
         ];
 
         let timelinesHTML = "";
@@ -267,30 +272,11 @@ async function renderPlayerPredictions(playerUserId) {
         orderedPhases.forEach(phase => {
             const phaseMatches = groupedMatches[phase];
 
-            let isPhaseUnlocked = true;
-            if (phase !== "Fase de Grupos" && !isMe) {
-                if (phaseMatches.length === 0) {
-                    isPhaseUnlocked = false; // No hay partidos = aún no llegamos a esa fase
-                } else {
-                    const latestMatchTime = Math.max(...phaseMatches.map(m => new Date(m.fecha_hora).getTime()));
-                    if (AppState.currentDate.getTime() < latestMatchTime) {
-                        isPhaseUnlocked = false;
-                    }
-                }
-            }
-
             finalHTML += `<div class="phase-box">`;
             finalHTML += `<h3 class="phase-box-title">${phase}</h3>`;
 
-            if (!isPhaseUnlocked) {
-                finalHTML += `
-                    <div class="phase-locked-message">
-                        <i data-lucide="lock" style="width: 32px; height: 32px;"></i>
-                        <span>Fase Oculta</span>
-                    </div>
-                `;
-            } else if (phaseMatches.length === 0) {
-                // Caso especial: si esMi perfil, está desbloqueada pero no hay partidos
+            if (phaseMatches.length === 0) {
+                // Caso especial: no hay partidos
                 finalHTML += `
                     <div class="phase-locked-message" style="opacity: 0.5;">
                         <i data-lucide="calendar" style="width: 32px; height: 32px;"></i>
@@ -315,54 +301,36 @@ async function renderPlayerPredictions(playerUserId) {
                     let cardBody = "";
                     let pointsEarnedLabel = "";
 
-                    if (!isStarted && !isMe) {
-                        cardBody = `
-                            <div class="mini-card-teams">
-                                <div class="mini-team-info">
-                                    <img class="mini-flag" src="https://flagcdn.com/${localTeam.codigo_iso}.svg" alt="">
-                                    <span>${localTeam.siglas}</span>
-                                </div>
-                                <div class="mini-secret-lock">
-                                    <i data-lucide="lock" style="width: 15px; height: 15px;"></i>
-                                </div>
-                                <div class="mini-team-info">
-                                    <span>${visitTeam.siglas}</span>
-                                    <img class="mini-flag" src="https://flagcdn.com/${visitTeam.codigo_iso}.svg" alt="">
-                                </div>
-                            </div>
-                        `;
-                    } else {
-                        const gl = pred ? pred.goles_local : "-";
-                        const gv = pred ? pred.goles_visitante : "-";
-                        const hasApuesta = pred !== undefined;
+                    const gl = pred ? pred.goles_local : "-";
+                    const gv = pred ? pred.goles_visitante : "-";
+                    const hasApuesta = pred !== undefined;
 
-                        if (isFinished && hasApuesta) {
-                            const pts = pred.puntos_ganados || 0;
-                            pointsEarnedLabel = pts === 3 ? `<span class="badge badge-gold" style="font-size:0.6rem;">+3 pts (Exacto)</span>` :
-                                pts === 1 ? `<span class="badge badge-info" style="font-size:0.6rem;">+1 pt (Resultado)</span>` :
-                                    `<span class="badge badge-danger" style="font-size:0.6rem;">0 pts</span>`;
-                        } else if (isFinished && !hasApuesta) {
-                            pointsEarnedLabel = `<span class="badge badge-danger" style="font-size:0.6rem;">0 pts</span>`;
-                        }
-
-                        cardBody = `
-                            <div class="mini-card-teams">
-                                <div class="mini-team-info">
-                                    <img class="mini-flag" src="https://flagcdn.com/${localTeam.codigo_iso}.svg" alt="">
-                                    <span>${localTeam.siglas}</span>
-                                </div>
-                                <div style="display:flex; align-items:center; gap:6px;">
-                                    <span class="mini-score-val">${gl}</span>
-                                    <span style="font-weight:700; color:var(--text-muted);">:</span>
-                                    <span class="mini-score-val">${gv}</span>
-                                </div>
-                                <div class="mini-team-info">
-                                    <span>${visitTeam.siglas}</span>
-                                    <img class="mini-flag" src="https://flagcdn.com/${visitTeam.codigo_iso}.svg" alt="">
-                                </div>
-                            </div>
-                        `;
+                    if (isFinished && hasApuesta) {
+                        const pts = pred.puntos_ganados || 0;
+                        pointsEarnedLabel = pts === 3 ? `<span class="badge badge-gold" style="font-size:0.6rem;">+3 pts (Exacto)</span>` :
+                            pts === 1 ? `<span class="badge badge-info" style="font-size:0.6rem;">+1 pt (Resultado)</span>` :
+                                `<span class="badge badge-danger" style="font-size:0.6rem;">0 pts</span>`;
+                    } else if (isFinished && !hasApuesta) {
+                        pointsEarnedLabel = `<span class="badge badge-danger" style="font-size:0.6rem;">0 pts</span>`;
                     }
+
+                    cardBody = `
+                        <div class="mini-card-teams">
+                            <div class="mini-team-info">
+                                <img class="mini-flag" src="https://flagcdn.com/${localTeam.codigo_iso}.svg" alt="">
+                                <span>${localTeam.siglas}</span>
+                            </div>
+                            <div style="display:flex; align-items:center; gap:6px;">
+                                <span class="mini-score-val">${gl}</span>
+                                <span style="font-weight:700; color:var(--text-muted);">:</span>
+                                <span class="mini-score-val">${gv}</span>
+                            </div>
+                            <div class="mini-team-info">
+                                <span>${visitTeam.siglas}</span>
+                                <img class="mini-flag" src="https://flagcdn.com/${visitTeam.codigo_iso}.svg" alt="">
+                            </div>
+                        </div>
+                    `;
 
                     const faseText = match.fase || 'Fase de Grupos';
                     
