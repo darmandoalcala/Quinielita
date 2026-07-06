@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clasificación | Quiniela Zenth</title>
+    <!-- CSS Dependencies -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/eliminatoria.css">
+    <link rel="stylesheet" href="../css/matches.css">
+    <link rel="stylesheet" href="../css/leaderboard.css">
+    <link rel="stylesheet" href="../css/leaderboard-modal.css">
+    
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: #fff;
+        }
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            padding: 2rem;
+            box-sizing: border-box;
+        }
+        .auth-container {
+            width: 100%;
+            max-width: 400px;
+            margin-top: 10vh;
+            text-align: center;
+        }
+        .leaderboard-wrapper {
+            display: none;
+            width: 100%;
+            max-width: 1000px;
+        }
+        #auth-error {
+            color: var(--danger);
+            margin-top: 1rem;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Auth Section -->
+    <div class="auth-container glass-panel" id="auth-section">
+        <h2 style="margin-bottom: 1rem; color: #fff;">Acceso a Clasificación</h2>
+        <p style="margin-bottom: 1.5rem; color: rgba(255,255,255,0.7); font-size: 0.9rem;">
+            Por favor, ingrese la contraseña para acceder a la tabla de posiciones.
+        </p>
+        <div class="form-group">
+            <input type="password" id="password-input" class="form-control" placeholder="Contraseña">
+        </div>
+        <button class="btn btn-primary" style="width: 100%; margin-top: 1rem;" onclick="checkPassword()">
+            Ingresar <i data-lucide="arrow-right"></i>
+        </button>
+        <p id="auth-error">Contraseña incorrecta.</p>
+    </div>
+
+    <!-- Leaderboard Section -->
+    <div class="leaderboard-wrapper" id="leaderboard-section">
+        <section id="leaderboard" class="glass-panel">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <i data-lucide="trophy" class="gold-icon"></i> 
+                    Tabla de Clasificación
+                </h2>
+                <p class="section-subtitle">Los mejores pronosticadores del torneo</p>
+            </div>
+            
+            <div style="overflow-x: auto;">
+                <table style="width: 100%; border-collapse: collapse; color: #fff;">
+                    <thead>
+                        <tr>
+                            <th>Rango</th>
+                            <th>Participante</th>
+                            <th id="td-correo">Correo</th>
+                            <th style="text-align: center;">Puntos</th>
+                            <th style="text-align: center;">Pronósticos</th>
+                        </tr>
+                    </thead>
+                    <tbody id="leaderboard-body">
+                        <!-- Datos cargados dinámicamente -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        
+        <!-- Contenedor para inyectar modals si es necesario -->
+        <div id="user-details-modal" class="modal-overlay hidden">
+            <div class="modal-card glass-panel" style="max-height: 90vh; overflow-y: auto;">
+                <div class="modal-header">
+                    <div>
+                        <h3 id="details-user-name" style="margin-bottom: 0.25rem;">Cargando...</h3>
+                        <p id="details-user-info" class="details-notice" style="color: rgba(255,255,255,0.7);"></p>
+                    </div>
+                    <button class="btn-close-modal" onclick="closeUserDetailsModal()">
+                        <i data-lucide="x"></i>
+                    </button>
+                </div>
+                <div id="details-predictions-grid" class="details-predictions-grid" style="display: grid; gap: 1rem; margin-top: 1rem;">
+                    <!-- Detalle de predicciones -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JS Dependencies -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <!-- Scripts of the App -->
+    <script src="../js/config.js"></script>
+    <script src="../js/supabase.js"></script>
+    
+    <script>
+        // Mock AppState for leaderboard.js dependency
+        const AppState = {
+            session: null,
+            matches: [],
+            leaderboard: [],
+            currentDate: new Date()
+        };
+        
+        lucide.createIcons();
+
+        async function checkPassword() {
+            const pwd = document.getElementById('password-input').value;
+            if (pwd === 'infra.soporte@zenth.mx') {
+                document.getElementById('auth-error').style.display = 'none';
+                document.getElementById('auth-section').style.display = 'none';
+                document.getElementById('leaderboard-section').style.display = 'block';
+                
+                // Fetch matches and teams necessary for leaderboard.js
+                const [{ data: matches }, { data: teams }] = await Promise.all([
+                    window.supabaseClient.from('partidos').select('*'),
+                    window.supabaseClient.from('equipos').select('*')
+                ]);
+                
+                if (matches && teams) {
+                    matches.forEach(match => {
+                        match.equipo_local = teams.find(t => t.id === match.equipo_local_id);
+                        match.equipo_visitante = teams.find(t => t.id === match.equipo_visitante_id);
+                    });
+                    AppState.matches = matches;
+                }
+                
+                // Call leaderboard initialization
+                if (typeof loadLeaderboardData === 'function') {
+                    loadLeaderboardData();
+                } else {
+                    console.error("loadLeaderboardData no está definido.");
+                }
+            } else {
+                document.getElementById('auth-error').style.display = 'block';
+            }
+        }
+        
+        // Listen to Enter key
+        document.getElementById('password-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                checkPassword();
+            }
+        });
+    </script>
+    
+    <!-- Load leaderboard logic -->
+    <script src="../js/leaderboard.js"></script>
+</body>
+</html>
