@@ -359,7 +359,13 @@ function calculateUserPoints() {
     });
 
     const ptsIndicator = document.getElementById("user-points");
-    if (ptsIndicator) ptsIndicator.textContent = `${points} pts`;
+    if (ptsIndicator) {
+        ptsIndicator.textContent = `${points} pts`;
+        ptsIndicator.style.filter = "blur(5px)";
+        ptsIndicator.style.userSelect = "none";
+        ptsIndicator.title = "Puntos ocultos por emoción";
+        ptsIndicator.style.cursor = "help";
+    }
 }
 
 

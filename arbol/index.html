@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Árbol de Eliminatoria</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/arbol.css">
+</head>
+<body>
+    <header class="app-header" style="margin-bottom: 2rem;">
+        <div class="header-logo" style="cursor: pointer;" onclick="window.location.href='../index.html'">
+            <div style="position: relative; display: inline-flex; justify-content: center;">
+                <img src="../img/logo.png" alt="Logo Empresa" class="company-logo" style="filter: brightness(100)">
+
+            </div>
+            <div class="logo-text">
+                <h1 style="color: #84c54c">QUINIELA</h1>
+                <span>FIFA World Cup 2026 - <strong style="color: #c44747">Árbol</strong></span>
+            </div>
+        </div>
+
+        <div class="user-profile-widget" id="header-profile-widget">
+            <div class="spinner inline-spinner" style="margin: 0;"></div>
+        </div>
+    </header>
+
+    <div style="display: flex; justify-content: flex-start; padding: 0 5vw; margin-bottom: 20px; max-width: 1400px; margin-left: auto; margin-right: auto;">
+        <a href="../index.html" class="btn btn-secondary btn-sm" style="text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
+            <i data-lucide="arrow-left" style="width: 16px; height: 16px;"></i>
+            Volver a la Quiniela
+        </a>
+    </div>
+
+    
+<div class="bracket-headers">
+    <div>16avos de Final</div>
+    <div>Octavos de Final</div>
+    <div>Cuartos de Final</div>
+    <div>Semifinal</div>
+    <div>Gran Final</div>
+    <div>Semifinal</div>
+    <div>Cuartos de Final</div>
+    <div>Octavos de Final</div>
+    <div>16avos de Final</div>
+</div>
+
+<div class="parent">
+    <!-- Ala Izquierda -->
+    <div class="div1 match-node"></div>
+    <div class="div2 match-node"></div>
+    <div class="div3 match-node"></div>
+    <div class="div4 match-node"></div>
+    <div class="div5 match-node"></div>
+    <div class="div6 match-node"></div>
+    <div class="div7 match-node"></div>
+    <div class="div8 match-node"></div>
+    
+    <div class="div17 match-node target-left"></div>
+    <div class="div18 match-node target-left"></div>
+    <div class="div19 match-node target-left"></div>
+    <div class="div20 match-node target-left"></div>
+    
+    <div class="div25 match-node target-left"></div>
+    <div class="div26 match-node target-left"></div>
+    
+    <div class="div29 match-node target-left"></div>
+
+    <!-- Ala Derecha -->
+    <div class="div9 match-node"></div>
+    <div class="div10 match-node"></div>
+    <div class="div11 match-node"></div>
+    <div class="div12 match-node"></div>
+    <div class="div13 match-node"></div>
+    <div class="div14 match-node"></div>
+    <div class="div15 match-node"></div>
+    <div class="div16 match-node"></div>
+
+    <div class="div21 match-node target-right"></div>
+    <div class="div22 match-node target-right"></div>
+    <div class="div23 match-node target-right"></div>
+    <div class="div24 match-node target-right"></div>
+    
+    <div class="div27 match-node target-right"></div>
+    <div class="div28 match-node target-right"></div>
+    
+    <div class="div30 match-node target-right"></div>
+
+    <!-- Centro (Final / 3er Puesto) -->
+    <div class="div31 match-node target-center" style="display: flex; flex-direction: column; justify-content: end; padding-bottom: 50px;"></div>
+    <div class="div32 match-node target-center-3er" style="display: flex; flex-direction: column;"></div>
+</div>
+    
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/config.js"></script>
+    <script src="../js/supabase.js"></script>
+    <script src="../js/arbol.js"></script>
+</body>
+</html>

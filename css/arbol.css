@@ -1,0 +1,371 @@
+
+.parent {
+    display: grid;
+    grid-template-columns: repeat(9, 1fr);
+    grid-template-rows: repeat(8, 1fr);
+    gap: 8px;
+}
+    
+
+.div2 {
+    grid-column-start: 1;
+    grid-row-start: 2;
+}
+
+.div3 {
+    grid-column-start: 1;
+    grid-row-start: 3;
+}
+
+.div4 {
+    grid-column-start: 1;
+    grid-row-start: 4;
+}
+
+.div5 {
+    grid-column-start: 1;
+    grid-row-start: 5;
+}
+
+.div6 {
+    grid-column-start: 1;
+    grid-row-start: 6;
+}
+
+.div7 {
+    grid-column-start: 1;
+    grid-row-start: 7;
+}
+
+.div8 {
+    grid-column-start: 1;
+    grid-row-start: 8;
+}
+
+.div9 {
+    grid-column-start: 9;
+    grid-row-start: 1;
+}
+
+.div10 {
+    grid-column-start: 9;
+    grid-row-start: 2;
+}
+
+.div11 {
+    grid-column-start: 9;
+    grid-row-start: 3;
+}
+
+.div12 {
+    grid-column-start: 9;
+    grid-row-start: 4;
+}
+
+.div13 {
+    grid-column-start: 9;
+    grid-row-start: 5;
+}
+
+.div14 {
+    grid-column-start: 9;
+    grid-row-start: 6;
+}
+
+.div15 {
+    grid-column-start: 9;
+    grid-row-start: 7;
+}
+
+.div16 {
+    grid-column-start: 9;
+    grid-row-start: 8;
+}
+
+.div17 {
+    grid-row: span 2 / span 2;
+    grid-column-start: 2;
+    grid-row-start: 1;
+}
+
+.div18 {
+    grid-row: span 2 / span 2;
+    grid-column-start: 2;
+    grid-row-start: 3;
+}
+
+.div19 {
+    grid-row: span 2 / span 2;
+    grid-column-start: 2;
+    grid-row-start: 5;
+}
+
+.div20 {
+    grid-row: span 2 / span 2;
+    grid-column-start: 2;
+    grid-row-start: 7;
+}
+
+.div21 {
+    grid-row: span 2 / span 2;
+    grid-column-start: 8;
+    grid-row-start: 1;
+}
+
+.div22 {
+    grid-row: span 2 / span 2;
+    grid-column-start: 8;
+    grid-row-start: 3;
+}
+
+.div23 {
+    grid-row: span 2 / span 2;
+    grid-column-start: 8;
+    grid-row-start: 5;
+}
+
+.div24 {
+    grid-row: span 2 / span 2;
+    grid-column-start: 8;
+    grid-row-start: 7;
+}
+
+.div25 {
+    grid-row: span 4 / span 4;
+    grid-column-start: 3;
+    grid-row-start: 1;
+}
+
+.div26 {
+    grid-row: span 4 / span 4;
+    grid-column-start: 3;
+    grid-row-start: 5;
+}
+
+.div27 {
+    grid-row: span 4 / span 4;
+    grid-column-start: 7;
+    grid-row-start: 1;
+}
+
+.div28 {
+    grid-row: span 4 / span 4;
+    grid-column-start: 7;
+    grid-row-start: 5;
+}
+
+.div29 {
+    grid-row: span 8 / span 8;
+    grid-column-start: 4;
+    grid-row-start: 1;
+}
+
+.div30 {
+    grid-row: span 8 / span 8;
+    grid-column-start: 6;
+    grid-row-start: 1;
+}
+
+.div31 {
+    grid-row: span 4 / span 4;
+    grid-column-start: 5;
+    grid-row-start: 1;
+}
+
+.div32 {
+    grid-row: span 4 / span 4;
+    grid-column-start: 5;
+    grid-row-start: 5;
+}
+        
+/* =========================================
+   ESTILOS DE LAS TARJETAS DEL �RBOL
+========================================= */
+
+.match-node {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.bracket-card {
+    width: 100%;
+    max-width: 150px;
+    background: rgba(30, 41, 59, 0.8);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    font-family: var(--font-main), sans-serif;
+    position: relative;
+    z-index: 2;
+}
+
+.bracket-card-header {
+    background: rgba(0, 0, 0, 0.3);
+    padding: 4px 8px;
+    font-size: 0.65rem;
+    color: #94a3b8;
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.bracket-card-body {
+    padding: 6px 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.team-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.team-flag {
+    width: 20px;
+    height: 14px;
+    object-fit: cover;
+    border-radius: 2px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.5);
+}
+
+.team-name {
+    flex: 1;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #f8fafc;
+}
+
+.team-score {
+    font-size: 0.9rem;
+    font-weight: bold;
+    color: #fff;
+    background: rgba(0,0,0,0.4);
+    padding: 2px 6px;
+    border-radius: 4px;
+    min-width: 24px;
+    text-align: center;
+}
+
+/* =========================================
+   L�NEAS CONECTORAS DEL �RBOL
+========================================= */
+
+/* Conectores Ala Izquierda */
+.target-left::before {
+    content: '';
+    position: absolute;
+    left: -12px;
+    width: 12px;
+    top: 25%;
+    bottom: 25%;
+    border-top: 2px solid rgba(255, 255, 255, 0.2);
+    border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+    border-left: 2px solid rgba(255, 255, 255, 0.2);
+    border-top-left-radius: 4px;
+    border-bottom-left-radius: 4px;
+    z-index: 0;
+}
+
+.target-left::after {
+    content: '';
+    position: absolute;
+    left: -12px;
+    width: 12px;
+    top: 50%;
+    border-top: 2px solid rgba(255, 255, 255, 0.2);
+    z-index: 0;
+}
+
+/* Conectores Ala Derecha */
+.target-right::before {
+    content: '';
+    position: absolute;
+    right: -12px;
+    width: 12px;
+    top: 25%;
+    bottom: 25%;
+    border-top: 2px solid rgba(255, 255, 255, 0.2);
+    border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+    border-right: 2px solid rgba(255, 255, 255, 0.2);
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+    z-index: 0;
+}
+
+.target-right::after {
+    content: '';
+    position: absolute;
+    right: -12px;
+    width: 12px;
+    top: 50%;
+    border-top: 2px solid rgba(255, 255, 255, 0.2);
+    z-index: 0;
+}
+
+/* Centro (Final) */
+.target-center::before {
+    content: '';
+    position: absolute;
+    left: -12px;
+    width: 12px;
+    top: 50%;
+    border-top: 2px solid rgba(255, 255, 255, 0.2);
+    z-index: 0;
+}
+.target-center::after {
+    content: '';
+    position: absolute;
+    right: -12px;
+    width: 12px;
+    top: 50%;
+    border-top: 2px solid rgba(255, 255, 255, 0.2);
+    z-index: 0;
+}
+
+/* =========================================
+   ENCABEZADOS DEL �RBOL
+========================================= */
+.bracket-headers {
+    display: grid;
+    grid-template-columns: repeat(9, 1fr);
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.bracket-headers div {
+    text-align: center;
+    font-size: 0.85vw;
+    font-weight: 800;
+    color: #84c54c;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+@media (max-width: 768px) {
+    .bracket-headers div {
+        font-size: 2.5vw;
+    }
+}
+
+/* Estilo para los t�tulos dentro de celdas (Final y Tercer Puesto) */
+.match-cell-title {
+    font-size: 0.85vw;
+    font-weight: 800;
+    color: #84c54c;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+    text-align: center;
+}
+
+@media (max-width: 768px) {
+    .match-cell-title {
+        font-size: 2.5vw;
+    }
+}
