@@ -484,7 +484,7 @@ function createStandardMatchCard(match, index) {
             ${footerContent}
             ${prediction && !isLocked && AppState.session ? `
                 <span class="prediction-status-saved">
-                    <i data-lucide="check-circle" style="width: 12px; height: 12px;"></i> PronÃ³stico Guardado
+                    <i data-lucide="check-circle" style="width: 12px; height: 12px;"></i> Pronóstico Guardado
                 </span>
             ` : ''}
         </div>
@@ -730,7 +730,7 @@ async function savePrediction(matchId) {
                 if (footer && !footer.querySelector('.prediction-status-saved')) {
                     const span = document.createElement('span');
                     span.className = 'prediction-status-saved';
-                    span.innerHTML = '<i data-lucide="check-circle" style="width: 12px; height: 12px;"></i> PronÃ³stico Guardado';
+                    span.innerHTML = '<i data-lucide="check-circle" style="width: 12px; height: 12px;"></i> Pronóstico Guardado';
                     footer.insertBefore(span, saveBtn);
                 }
             }
