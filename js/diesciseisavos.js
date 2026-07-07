@@ -6,7 +6,7 @@ const AppState = {
     predictions: [],
     teams: [],
     leaderboard: [],
-    activeTab: 'tab-eliminatoria',
+    activeTab: 'tab-cuartos',
     currentDate: new Date(),
     matchesPerPage: 24,
     matchesDisplayed: 24
@@ -72,14 +72,30 @@ async function initApp() {
             await window.trophyAnimationLoaded;
         }
 
-        showScreen('dashboard-screen');
-        window.dispatchEvent(new Event('scroll'));
+        const finalizeLoading = () => {
+            showScreen('dashboard-screen');
+            window.dispatchEvent(new Event('scroll'));
+        };
+        const trophySpinner = document.getElementById("main-loading-trophy");
+        if (trophySpinner) {
+            trophySpinner.addEventListener('animationiteration', finalizeLoading, { once: true });
+        } else {
+            finalizeLoading();
+        }
 
     } catch (err) {
-        console.error("Error en inicializaciÃ³n de app:", err);
+        console.error("Error en inicialización de app:", err);
         setupAnonymousHeader();
         await loadQuinielaData();
-        showScreen('dashboard-screen');
+        const finalizeLoadingErr = () => {
+            showScreen('dashboard-screen');
+        };
+        const trophySpinner = document.getElementById("main-loading-trophy");
+        if (trophySpinner) {
+            trophySpinner.addEventListener('animationiteration', finalizeLoadingErr, { once: true });
+        } else {
+            finalizeLoadingErr();
+        }
     }
 }
 
@@ -259,7 +275,7 @@ async function loadQuinielaData() {
 
         // Inyectar en ambas vistas
         renderMatches();
-        render16avos();
+        renderCuartos();
 
     } catch (err) {
         console.error("Error al cargar quiniela:", err);

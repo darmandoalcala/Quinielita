@@ -20,7 +20,7 @@ async function initArbol() {
                     .from('predicciones')
                     .select('puntos_ganados')
                     .eq('usuario_id', session.user.id);
-                
+
                 let points = 0;
                 if (predData) {
                     predData.forEach(pred => {
@@ -70,10 +70,19 @@ async function initArbol() {
         if (matchesError) throw matchesError;
 
         renderArbol(matchesData);
+        showScreen('dashboard-screen');
 
     } catch (err) {
         console.error("Error al cargar datos del árbol:", err);
+        showScreen('dashboard-screen');
     }
+}
+
+function showScreen(screenId) {
+    document.querySelectorAll(".screen").forEach(screen => screen.classList.add("hidden"));
+    const target = document.getElementById(screenId);
+    if (target) target.classList.remove("hidden");
+    if (typeof lucide !== 'undefined') lucide.createIcons();
 }
 
 function renderArbol(matches) {
@@ -87,7 +96,7 @@ function renderArbol(matches) {
     const d8 = getMatchesByPhase('Octavos');
     const d4 = getMatchesByPhase('Cuartos');
     const d2 = getMatchesByPhase('Semifinales');
-    
+
     const finalMatches = getMatchesByPhase('Final');
     const thirdMatches = matches
         .filter(m => m.fase === 'Tercer Puesto' || m.fase === 'Tercer lugar' || m.fase === 'Tercer Lugar')
@@ -114,18 +123,18 @@ function renderArbol(matches) {
             `;
             return;
         }
-        
+
         const localTeam = match.equipo_local || { nombre: "Por definir", siglas: "---", codigo_iso: null };
         const visitTeam = match.equipo_visitante || { nombre: "Por definir", siglas: "---", codigo_iso: null };
         const scoreL = match.goles_local !== null ? match.goles_local : "-";
         const scoreV = match.goles_visitante !== null ? match.goles_visitante : "-";
-        
+
         let matchStatusStr = "Por definir";
         if (match.fecha_hora) {
             const d = new Date(match.fecha_hora);
-            matchStatusStr = match.estatus === 'Finalizado' ? 'FT' : 
-                             match.estatus === 'En Curso' ? '<span style="color:#eab308">En Curso</span>' : 
-                             `${d.getDate().toString().padStart(2, '0')}/${(d.getMonth()+1).toString().padStart(2, '0')} ${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}`;
+            matchStatusStr = match.estatus === 'Finalizado' ? 'FT' :
+                match.estatus === 'En Curso' ? '<span style="color:#eab308">En Curso</span>' :
+                    `${d.getDate().toString().padStart(2, '0')}/${(d.getMonth() + 1).toString().padStart(2, '0')} ${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}`;
         }
 
         const getFlagImg = (team) => {
