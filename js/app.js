@@ -62,10 +62,6 @@ async function initApp() {
                     profileWidget.innerHTML = `
                         <div class="profile-info">
                             <span class="user-name" id="user-display-name">${AppState.userProfile.nombre_completo}</span>
-                            <div class="points-indicator">
-                                <i data-lucide="award" class="gold-icon"></i>
-                                <span id="user-points" class="points-val">0 pts</span>
-                            </div>
                         </div>
                         <div class="profile-actions">
                             <button id="logout-btn" class="btn-icon danger" title="Cerrar Sesión" onclick="handleLogout()">
@@ -363,7 +359,13 @@ function calculateUserPoints() {
     });
 
     const ptsIndicator = document.getElementById("user-points");
-    if (ptsIndicator) ptsIndicator.textContent = `${points} pts`;
+    if (ptsIndicator) {
+        ptsIndicator.textContent = `${points} pts`;
+        ptsIndicator.style.filter = "blur(5px)";
+        ptsIndicator.style.userSelect = "none";
+        ptsIndicator.title = "Puntos ocultos por emoción";
+        ptsIndicator.style.cursor = "help";
+    }
 }
 
 

@@ -6,7 +6,7 @@ const AppState = {
     predictions: [],
     teams: [],
     leaderboard: [],
-    activeTab: 'tab-eliminatoria',
+    activeTab: 'tab-cuartos',
     currentDate: new Date(),
     matchesPerPage: 24,
     matchesDisplayed: 24
@@ -72,14 +72,30 @@ async function initApp() {
             await window.trophyAnimationLoaded;
         }
 
-        showScreen('dashboard-screen');
-        window.dispatchEvent(new Event('scroll'));
+        const finalizeLoading = () => {
+            showScreen('dashboard-screen');
+            window.dispatchEvent(new Event('scroll'));
+        };
+        const trophySpinner = document.getElementById("main-loading-trophy");
+        if (trophySpinner) {
+            trophySpinner.addEventListener('animationiteration', finalizeLoading, { once: true });
+        } else {
+            finalizeLoading();
+        }
 
     } catch (err) {
-        console.error("Error en inicializaciÃ³n de app:", err);
+        console.error("Error en inicialización de app:", err);
         setupAnonymousHeader();
         await loadQuinielaData();
-        showScreen('dashboard-screen');
+        const finalizeLoadingErr = () => {
+            showScreen('dashboard-screen');
+        };
+        const trophySpinner = document.getElementById("main-loading-trophy");
+        if (trophySpinner) {
+            trophySpinner.addEventListener('animationiteration', finalizeLoadingErr, { once: true });
+        } else {
+            finalizeLoadingErr();
+        }
     }
 }
 
@@ -259,7 +275,7 @@ async function loadQuinielaData() {
 
         // Inyectar en ambas vistas
         renderMatches();
-        render16avos();
+        renderCuartos();
 
     } catch (err) {
         console.error("Error al cargar quiniela:", err);
@@ -273,7 +289,13 @@ function calculateUserPoints() {
     });
 
     const ptsIndicator = document.getElementById("user-points");
-    if (ptsIndicator) ptsIndicator.textContent = `${points} pts`;
+    if (ptsIndicator) {
+        ptsIndicator.textContent = `pts`;
+        ptsIndicator.style.filter = "blur(5px)";
+        ptsIndicator.style.userSelect = "none";
+        ptsIndicator.title = "Puntos ocultos por emoción";
+        ptsIndicator.style.cursor = "help";
+    }
 }
 
 // ==========================================================================
@@ -462,7 +484,7 @@ function createStandardMatchCard(match, index) {
             ${footerContent}
             ${prediction && !isLocked && AppState.session ? `
                 <span class="prediction-status-saved">
-                    <i data-lucide="check-circle" style="width: 12px; height: 12px;"></i> PronÃ³stico Guardado
+                    <i data-lucide="check-circle" style="width: 12px; height: 12px;"></i> Pronóstico Guardado
                 </span>
             ` : ''}
         </div>
@@ -708,7 +730,7 @@ async function savePrediction(matchId) {
                 if (footer && !footer.querySelector('.prediction-status-saved')) {
                     const span = document.createElement('span');
                     span.className = 'prediction-status-saved';
-                    span.innerHTML = '<i data-lucide="check-circle" style="width: 12px; height: 12px;"></i> PronÃ³stico Guardado';
+                    span.innerHTML = '<i data-lucide="check-circle" style="width: 12px; height: 12px;"></i> Pronóstico Guardado';
                     footer.insertBefore(span, saveBtn);
                 }
             }
