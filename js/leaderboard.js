@@ -148,18 +148,18 @@ async function viewPlayerPredictions(playerUserId) {
         // Genera LINEA DEL TIEMPO PARA MULTIPLES FASES
         const phasesToTimeline = [
             { id: "Fase de Grupos", label: "Fase de Grupos", totalMatches: 72 },
-            { id: "16avos", label: "16avos de Final", totalMatches: 16 },
-            { id: "Octavos", label: "Octavos de Final", totalMatches: 8 },
-            { id: "Cuartos", label: "Cuartos de Final", totalMatches: 4 },
-            { id: "Semifinales", label: "Semifinales", totalMatches: 2 },
-            { id: "Tercer lugar", label: "Tercer Puesto", totalMatches: 1 },
-            { id: "Final", label: "Final", totalMatches: 1 }
+            { id: "Fase Eliminatoria", label: "Fase Eliminatoria", totalMatches: 32 }
         ];
 
         let timelinesHTML = "";
 
         phasesToTimeline.forEach(phaseConfig => {
-            const matches = AppState.matches.filter(m => (m.fase || 'Fase de Grupos') === phaseConfig.id);
+            const matches = AppState.matches.filter(m => {
+                const f = m.fase || 'Fase de Grupos';
+                if (phaseConfig.id === "Fase de Grupos") return f === "Fase de Grupos";
+                if (phaseConfig.id === "Fase Eliminatoria") return f !== "Fase de Grupos";
+                return f === phaseConfig.id;
+            });
             if (matches.length === 0) return;
             
             matches.sort((a, b) => new Date(a.fecha_hora) - new Date(b.fecha_hora));
@@ -256,7 +256,7 @@ async function renderPlayerPredictions(playerUserId) {
 
         const isMe = AppState.session ? playerUserId === AppState.session.user.id : false;
 
-        const orderedPhases = ["Fase de Grupos", "16avos", "Octavos", "Cuartos", "Semifinales", "Tercer lugar", "Final"];
+        const orderedPhases = ["Fase de Grupos", "16avos", "Octavos", "Cuartos", "Semifinales", "Tercer Puesto", "Final"];
         let groupedMatches = {};
         orderedPhases.forEach(ph => groupedMatches[ph] = []);
         
@@ -276,7 +276,7 @@ async function renderPlayerPredictions(playerUserId) {
             finalHTML += `<h3 class="phase-box-title">${phase}</h3>`;
 
             if (phaseMatches.length === 0) {
-                // Caso especial: no hay partidos
+                // Caso especial: si está desbloqueada pero no hay partidos en la BD
                 finalHTML += `
                     <div class="phase-locked-message" style="opacity: 0.5;">
                         <i data-lucide="calendar" style="width: 32px; height: 32px;"></i>
@@ -293,7 +293,6 @@ async function renderPlayerPredictions(playerUserId) {
                     const visitTeam = match.equipo_visitante || { nombre: "Visitante", siglas: "VIS", codigo_iso: "unknown" };
 
                     const matchDate = new Date(match.fecha_hora);
-                    const isStarted = matchDate <= AppState.currentDate;
                     const isFinished = match.goles_local !== null && match.goles_visitante !== null;
 
                     const pred = rawPreds.find(p => p.partido_id === match.id);
@@ -401,4 +400,3 @@ function showToast(title, message, type = "info") {
         setTimeout(() => toast.remove(), 400);
     }, 5000);
 }
-

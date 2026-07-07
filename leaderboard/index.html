@@ -93,7 +93,7 @@
         
         <!-- Contenedor para inyectar modals si es necesario -->
         <div id="user-details-modal" class="modal-overlay hidden">
-            <div class="modal-card glass-panel" style="max-height: 90vh; overflow-y: auto;">
+            <div class="modal-card glass-card" style="max-height: 90vh; overflow-y: auto;">
                 <div class="modal-header">
                     <div>
                         <h3 id="details-user-name" style="margin-bottom: 0.25rem;">Cargando...</h3>
@@ -144,8 +144,8 @@
                 
                 if (matches && teams) {
                     matches.forEach(match => {
-                        match.equipo_local = teams.find(t => t.id === match.equipo_local_id);
-                        match.equipo_visitante = teams.find(t => t.id === match.equipo_visitante_id);
+                        match.equipo_local = teams.find(t => t.codigo_iso === match.equipo_local_id || t.id === match.equipo_local_id);
+                        match.equipo_visitante = teams.find(t => t.codigo_iso === match.equipo_visitante_id || t.id === match.equipo_visitante_id);
                     });
                     AppState.matches = matches;
                 }
