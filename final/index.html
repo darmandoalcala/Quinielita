@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resumen Final - Quiniela</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/final.css">
+</head>
+
+<body>
+    <!-- PANTALLA DE CARGA -->
+    <div id="loading-screen" class="screen loading-screen">
+        <div class="spinner-container">
+            <img src="../img/worldcup_trophy/0001.webp" class="trophy-spinner main-trophy-spinner" alt="Cargando...">
+            <p>Calculando Posiciones Históricas...</p>
+        </div>
+    </div>
+
+    <!-- PANTALLA DASHBOARD -->
+    <div id="dashboard-screen" class="screen dashboard-screen hidden split-layout">
+        
+        <!-- Columna Izquierda: Tabla de Posiciones -->
+        <div class="left-column">
+            <div class="animation-container">
+                <div id="leaderboard-container" class="leaderboard-container">
+                    <!-- Las barras se generarán aquí -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Columna Derecha: Carrusel de Partidos -->
+        <div class="right-column">
+            <div id="match-carousel" class="match-carousel">
+                <!-- Las tarjetas de los partidos se generarán aquí dinámicamente -->
+            </div>
+        </div>
+
+        <button id="btn-manual-pause" class="floating-pause-btn" onclick="togglePause()">
+            <i data-lucide="pause"></i>
+        </button>
+    </div>
+
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/config.js"></script>
+    <script src="../js/supabase.js"></script>
+    <script src="../js/final.js"></script>
+</body>
+</html>
