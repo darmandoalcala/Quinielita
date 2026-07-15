@@ -1,3 +1,24 @@
+// Pre-carga de imágenes de animación del trofeo
+const images = [];
+let loadedImagesCount = 0;
+const imagesLoadedPromise = new Promise((resolve) => {
+    const basePath = '../img/worldcup_trophy/';
+    for (let i = 1; i <= 30; i++) {
+        const num = i.toString().padStart(4, '0');
+        const imgObj = new Image();
+        imgObj.onload = imgObj.onerror = () => {
+            loadedImagesCount++;
+            if (loadedImagesCount === 30) {
+                resolve();
+            }
+        };
+        imgObj.src = `${basePath}${num}.webp`;
+        images.push(imgObj);
+    }
+    // Timeout de seguridad en caso de red lenta
+    setTimeout(resolve, 2500);
+});
+
 document.addEventListener("DOMContentLoaded", () => {
     initArbol();
 });
@@ -70,7 +91,21 @@ async function initArbol() {
         if (matchesError) throw matchesError;
 
         renderArbol(matchesData);
-        showScreen('dashboard-screen');
+
+        // Esperar a que se pre-carguen las imágenes antes de iniciar la transición
+        await imagesLoadedPromise;
+
+        const startTransition = () => {
+            playTreeTrophyAnimation();
+        };
+
+        const trophySpinner = document.getElementById("main-loading-trophy");
+        if (trophySpinner) {
+            // Esperar a que termine el giro actual de la animación para quedar derecho
+            trophySpinner.addEventListener('animationiteration', startTransition, { once: true });
+        } else {
+            startTransition();
+        }
 
     } catch (err) {
         console.error("Error al cargar datos del árbol:", err);
@@ -83,6 +118,122 @@ function showScreen(screenId) {
     const target = document.getElementById(screenId);
     if (target) target.classList.remove("hidden");
     if (typeof lucide !== 'undefined') lucide.createIcons();
+}
+
+function playTreeTrophyAnimation() {
+    const dashboard = document.getElementById('dashboard-screen');
+    const loadingScreen = document.getElementById('loading-screen');
+    const spinnerImg = document.getElementById('main-loading-trophy');
+
+    if (!dashboard || !loadingScreen || !spinnerImg) {
+        showScreen('dashboard-screen');
+        return;
+    }
+
+    // Bloquear scroll de la página durante el vuelo del trofeo
+    document.body.style.overflow = 'hidden';
+
+    // 1. Mostrar temporalmente el dashboard invisible para medir el trofeo final
+    dashboard.style.visibility = 'hidden';
+    dashboard.classList.remove('hidden');
+
+    const finalTrophy = document.getElementById('final-tree-trophy');
+    if (!finalTrophy) {
+        // Fallback si no existe el trofeo
+        dashboard.style.visibility = '';
+        document.body.style.overflow = '';
+        loadingScreen.classList.add('hidden');
+        return;
+    }
+
+    // Ocultar temporalmente el trofeo estático del árbol
+    finalTrophy.style.opacity = '0';
+
+    // Obtener dimensiones y posición del trofeo final respecto al viewport
+    const rect = finalTrophy.getBoundingClientRect();
+    
+    // Obtener dimensiones iniciales del spinner
+    const spinnerRect = spinnerImg.getBoundingClientRect();
+
+    // 2. Detener rotación y preparar el spinner para la animación de vuelo
+    spinnerImg.classList.remove('main-trophy-spinner', 'trophy-spinner');
+    spinnerImg.style.animation = 'none';
+    spinnerImg.style.position = 'fixed';
+    spinnerImg.style.margin = '0';
+    spinnerImg.style.zIndex = '10000';
+    spinnerImg.style.transform = 'none';
+    spinnerImg.style.transition = 'none';
+    
+    // Fijar posición inicial exacta del spinner
+    spinnerImg.style.left = `${spinnerRect.left}px`;
+    spinnerImg.style.top = `${spinnerRect.top}px`;
+    spinnerImg.style.width = `${spinnerRect.width}px`;
+    spinnerImg.style.height = `${spinnerRect.height}px`;
+
+    // 3. Animaciones síncronas de desvanecimiento
+    loadingScreen.style.transition = 'background-color 0.8s ease';
+    loadingScreen.style.backgroundColor = 'transparent';
+
+    const loadingText = loadingScreen.querySelector('.spinner-container p');
+    if (loadingText) {
+        loadingText.style.transition = 'opacity 0.5s ease';
+        loadingText.style.opacity = '0';
+    }
+
+    // Mostrar gradualmente el dashboard
+    dashboard.style.opacity = '0';
+    dashboard.style.transition = 'opacity 0.8s ease';
+    dashboard.style.visibility = 'visible';
+    void dashboard.offsetWidth; // Reflow
+    dashboard.style.opacity = '1';
+
+    // 4. Bucle cinematográfico (vuelo y cambio de frames)
+    const duration = 1200; // 1.2 segundos para el trayecto y la rotación
+    const startTime = performance.now();
+
+    const animateTrophy = (currentTime) => {
+        const elapsed = currentTime - startTime;
+        const fraction = Math.min(1, elapsed / duration);
+
+        // Easing out cubic para frenar suavemente al llegar
+        const ease = 1 - Math.pow(1 - fraction, 3);
+
+        // Interpolar posición y dimensiones
+        const currentLeft = spinnerRect.left + (rect.left - spinnerRect.left) * ease;
+        const currentTop = spinnerRect.top + (rect.top - spinnerRect.top) * ease;
+        const currentWidth = spinnerRect.width + (rect.width - spinnerRect.width) * ease;
+        const currentHeight = spinnerRect.height + (rect.height - spinnerRect.height) * ease;
+
+        spinnerImg.style.left = `${currentLeft}px`;
+        spinnerImg.style.top = `${currentTop}px`;
+        spinnerImg.style.width = `${currentWidth}px`;
+        spinnerImg.style.height = `${currentHeight}px`;
+
+        // Interpolar frames de 0 a 29
+        const frameIndex = Math.min(29, Math.max(0, Math.floor(ease * 30)));
+        if (images[frameIndex]) {
+            spinnerImg.src = images[frameIndex].src;
+        }
+
+        if (fraction < 1) {
+            requestAnimationFrame(animateTrophy);
+        } else {
+            // Animación concluida
+            finalTrophy.style.opacity = '1'; // Mostrar trofeo real en el árbol
+            loadingScreen.classList.add('hidden'); // Ocultar definitivamente pantalla de carga
+            document.body.style.overflow = ''; // Restaurar scroll
+            
+            // Limpiar estilos temporales del loadingScreen y dashboard
+            loadingScreen.style.backgroundColor = '';
+            if (loadingText) loadingText.style.opacity = '';
+            dashboard.style.opacity = '';
+            dashboard.style.transition = '';
+            
+            spinnerImg.remove(); // Eliminar spinner temporal
+        }
+    };
+
+    requestAnimationFrame(animateTrophy);
 }
 
 function renderArbol(matches) {
@@ -199,7 +350,7 @@ function renderArbol(matches) {
     renderMatchToDiv(d2[1], '.div30');
 
     // Final (div31)
-    renderMatchToDiv(finalMatches[0], '.div31', '<img src="../img/worldcup_trophy/0030.webp" alt="Trofeo" style="height: 100px; object-fit: contain; filter: drop-shadow(0 10px 10px rgba(0,0,0,0.6)); margin-bottom: 5px; position: relative; z-index: 10;">');
+    renderMatchToDiv(finalMatches[0], '.div31', '<img src="../img/worldcup_trophy/0030.webp" id="final-tree-trophy" alt="Trofeo" style="height: 100px; object-fit: contain; filter: drop-shadow(0 10px 10px rgba(0,0,0,0.6)); margin-bottom: 5px; position: relative; z-index: 10;">');
 
     // Tercer Puesto (div32)
     renderMatchToDiv(thirdMatches[0], '.div32', 'Tercer Puesto');
