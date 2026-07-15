@@ -273,9 +273,12 @@ async function loadQuinielaData() {
             AppState.predictions = [];
         }
 
-        // Inyectar en ambas vistas
-        renderMatches();
-        renderCuartos();
+        // Inyectar la pestaña activa
+        const activeTabEl = document.querySelector('.nav-tab.active');
+        if (activeTabEl) {
+            AppState.activeTab = activeTabEl.getAttribute('data-tab');
+        }
+        switchTab(AppState.activeTab);
 
     } catch (err) {
         console.error("Error al cargar quiniela:", err);

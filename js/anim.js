@@ -26,16 +26,18 @@ document.addEventListener("DOMContentLoaded", () => {
     container.style.opacity = '1';
     container.style.transition = 'opacity 0.3s ease';
     
-    const img = document.createElement('img');
-    img.style.maxHeight = '90vh';
-    img.style.maxWidth = '90vw';
-    img.style.objectFit = 'contain';
-    img.style.filter = 'drop-shadow(0 0 20px rgba(110, 230, 106, 0.12))';
-    
-    img.style.willChange = 'src';
-    
-    img.src = `${basePath}0001.webp`;
-    container.appendChild(img);
+    let img = document.getElementById('main-loading-trophy');
+    const isReused = !!img;
+    if (!isReused) {
+        img = document.createElement('img');
+        img.style.maxHeight = '90vh';
+        img.style.maxWidth = '90vw';
+        img.style.objectFit = 'contain';
+        img.style.filter = 'drop-shadow(0 0 20px rgba(110, 230, 106, 0.12))';
+        img.style.willChange = 'src';
+        img.src = `${basePath}0001.webp`;
+        container.appendChild(img);
+    }
     
     // scroll arrow
     const scrollIndicator = document.createElement('div');
@@ -92,6 +94,21 @@ document.addEventListener("DOMContentLoaded", () => {
             container.style.opacity = '0';
             if (title) title.style.opacity = '0';
             return;
+        }
+
+        if (img.parentNode !== container) {
+            img.classList.remove('main-trophy-spinner', 'trophy-spinner');
+            img.style.position = '';
+            img.style.top = '';
+            img.style.left = '';
+            img.style.transform = '';
+            img.style.animation = 'none';
+            img.style.maxHeight = '90vh';
+            img.style.maxWidth = '90vw';
+            img.style.objectFit = 'contain';
+            img.style.filter = 'drop-shadow(0 0 20px rgba(110, 230, 106, 0.12))';
+            img.style.willChange = 'src';
+            container.appendChild(img);
         }
 
         const frameIndex = Math.min(29, Math.max(0, Math.floor(scrollFraction * 30)));
