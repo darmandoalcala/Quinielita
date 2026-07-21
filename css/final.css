@@ -494,3 +494,147 @@
     box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
     border-color: rgba(255, 255, 255, 0.4);
 }
+
+/* Pantalla de Premiación */
+.premiacion-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-image: linear-gradient(rgba(7, 10, 19, 0.93), rgba(7, 10, 19, 0.93)), url('../img/background.webp');
+    background-attachment: fixed;
+    background-size: cover;
+    background-position: center;
+    min-height: 100vh;
+    width: 100vw;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 999;
+}
+
+.premiacion-container {
+    text-align: center;
+    max-width: 600px;
+    padding: 3rem 2rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 24px;
+    backdrop-filter: blur(20px);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), inset 0 0 15px rgba(255, 255, 255, 0.05);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    animation: containerFadeUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes containerFadeUp {
+    0% {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.premium-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+    margin-top: 0;
+    margin-bottom: 20px;
+    gap: 10px;
+}
+
+.premium-trophy-glow {
+    height: 260px;
+    width: 100px; /* Recorta los bordes transparentes laterales del lienzo cuadrado del trofeo */
+    object-fit: cover;
+    object-position: center;
+    position: relative;
+    z-index: 2;
+    left: 15px; /* Desplazamiento simétrico a la derecha para empalme y centrado absoluto */
+    opacity: 0.7;
+    transition: opacity 0.3s ease; /* Transición suave de opacidad */
+}
+
+.logo-premiacion {
+    z-index: 3;
+    width: 250px;
+    height: auto;
+    object-fit: contain;
+    filter: brightness(2.8);
+    position: relative;
+    opacity: .7;
+    right: 15px; /* Desplazamiento simétrico a la izquierda para empalme y centrado absoluto */
+    transition: opacity 0.3s ease; /* Transición suave de opacidad */
+}
+
+/* Incrementar opacidad del trofeo y logo al pasar sobre el botón COMENZAR */
+.premiacion-screen:has(.premiacion-btn:hover) .premium-trophy-glow,
+.premiacion-screen:has(.premiacion-btn:hover) .logo-premiacion {
+    opacity: 1;
+}
+
+.premiacion-btn {
+    font-family: 'Outfit', sans-serif;
+    background: linear-gradient(135deg, #84c54c 0%, #38571c 100%);
+    border: none;
+    outline: none;
+    color: white;
+    font-size: 1.1rem;
+    font-weight: 600;
+    padding: 12px 36px;
+    border-radius: 30px;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35); /* Subtle dark shadow instead of bright green glow */
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    letter-spacing: 1px;
+    position: relative;
+    overflow: hidden;
+    margin-top: 6vh;
+    opacity: 0.7; /* Opacidad del 70% por defecto */
+}
+
+.premiacion-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -50%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255, 255, 255, 0.5) 50%, rgba(255,255,255,0) 100%); /* Less bright shine effect */
+    transform: skewX(-25deg);
+    transition: none;
+}
+
+.premiacion-btn:hover::before {
+    animation: btnShine 0.8s ease-in-out forwards;
+}
+
+@keyframes btnShine {
+    0% {
+        left: -50%;
+    }
+    100% {
+        left: 150%;
+    }
+}
+
+.premiacion-btn:hover {
+    transform: translateY(-2px) scale(1.03);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.45); /* Subtle dark shadow on hover */
+    opacity: 1; /* Ilumina a opacidad completa al pasar el cursor */
+}
+
+.premiacion-btn:active {
+    transform: translateY(-1px) scale(0.98);
+}

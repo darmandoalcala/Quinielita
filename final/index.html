@@ -13,30 +13,31 @@
 </head>
 
 <body>
-    <!-- PANTALLA DE CARGA -->
-    <div id="loading-screen" class="screen loading-screen">
-        <div class="spinner-container">
-            <img src="../img/worldcup_trophy/0001.webp" class="trophy-spinner main-trophy-spinner" alt="Cargando...">
-            <p>Calculando Posiciones Históricas...</p>
-        </div>
+    <!-- PANTALLA DE PREMIACIÓN -->
+    <div id="premiacion-screen" class="screen premiacion-screen">
+            <div class="premium-header">
+                <img src="../img/worldcup_trophy/0030.webp" class="premium-trophy-glow" alt="Trofeo Mundialista">
+                <img src="../img/logo.png" class="logo-premiacion" alt="logo">
+            </div>
+            <button class="premiacion-btn" onclick="startAwarding()">
+                <span>COMENZAR</span>
+            </button>
     </div>
 
     <!-- PANTALLA DASHBOARD -->
     <div id="dashboard-screen" class="screen dashboard-screen hidden split-layout">
         
-        <!-- Columna Izquierda: Tabla de Posiciones -->
+        <!-- TABLA DE POSICIONES -->
         <div class="left-column">
             <div class="animation-container">
                 <div id="leaderboard-container" class="leaderboard-container">
-                    <!-- Las barras se generarán aquí -->
                 </div>
             </div>
         </div>
 
-        <!-- Columna Derecha: Carrusel de Partidos -->
+        <!-- CARRUSEL DE PARTIDOS -->
         <div class="right-column">
             <div id="match-carousel" class="match-carousel">
-                <!-- Las tarjetas de los partidos se generarán aquí dinámicamente -->
             </div>
         </div>
 
