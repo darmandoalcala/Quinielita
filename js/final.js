@@ -72,14 +72,12 @@ async function initFinal() {
         state.matches = matchesData;
         state.predictions = predsData;
 
-        // Ocultar pantalla de carga, mostrar dashboard
-        // Show the scoreboard and start animation automatically
-        setTimeout(() => {
-            startAnimation();
-        }, 1000);
+        // Asegurar que se muestra la pantalla de premiación
+        const loadingScreen = document.getElementById('loading-screen');
+        if (loadingScreen) loadingScreen.classList.add('hidden');
 
-        document.getElementById('loading-screen').classList.add('hidden');
-        document.getElementById('dashboard-screen').classList.remove('hidden');
+        const premiacionScreen = document.getElementById('premiacion-screen');
+        if (premiacionScreen) premiacionScreen.classList.remove('hidden');
         if (typeof lucide !== 'undefined') lucide.createIcons();
 
         buildLeaderboardDOM();
@@ -87,6 +85,35 @@ async function initFinal() {
         console.error("Error al cargar datos:", err);
     }
 }
+
+// Función para iniciar la premiación y transición al dashboard
+window.startAwarding = function () {
+    const premiacionScreen = document.getElementById('premiacion-screen');
+    if (!premiacionScreen) return;
+
+    // Efecto de desvanecimiento
+    premiacionScreen.style.transition = 'opacity 0.6s ease';
+    premiacionScreen.style.opacity = '0';
+
+    setTimeout(() => {
+        premiacionScreen.classList.add('hidden');
+        premiacionScreen.style.opacity = ''; // Restaurar para futuras cargas
+
+        const dashboard = document.getElementById('dashboard-screen');
+        if (dashboard) {
+            dashboard.classList.remove('hidden');
+            dashboard.style.opacity = '0';
+            dashboard.style.transition = 'opacity 0.8s ease';
+            void dashboard.offsetWidth; // Forzar reflow
+            dashboard.style.opacity = '1';
+        }
+
+        // Iniciar animación automática de resultados después de una pausa de 3 segundos
+        setTimeout(() => {
+            startAnimation();
+        }, 3000);
+    }, 600);
+};
 
 function buildLeaderboardDOM() {
     const container = document.getElementById('leaderboard-container');
@@ -127,10 +154,10 @@ function buildLeaderboardDOM() {
 function createMatchCard(matchIndex) {
     if (matchIndex >= state.matches.length) return null;
     const match = state.matches[matchIndex];
-    
+
     const local = match.equipo_local ? match.equipo_local.nombre : "Por definir";
     const visit = match.equipo_visitante ? match.equipo_visitante.nombre : "Por definir";
-    
+
     const localIso = match.equipo_local && match.equipo_local.codigo_iso ? match.equipo_local.codigo_iso.toLowerCase() : "";
     const visitIso = match.equipo_visitante && match.equipo_visitante.codigo_iso ? match.equipo_visitante.codigo_iso.toLowerCase() : "";
 
@@ -139,7 +166,7 @@ function createMatchCard(matchIndex) {
 
     const flagL = localIso ? `https://flagcdn.com/w160/${localIso}.png` : "";
     const flagV = visitIso ? `https://flagcdn.com/w160/${visitIso}.png` : "";
-    
+
     const phase = match.fase || 'Fase de Grupos';
     const matchNum = match.partido_id || (matchIndex + 1);
 
@@ -150,7 +177,7 @@ function createMatchCard(matchIndex) {
     const card = document.createElement('div');
     card.className = 'match-card';
     card.id = `match-card-${matchIndex}`;
-    
+
     card.innerHTML = `
         <div class="card-match-counter">${phase}</div>
         <div class="match-number-badge">${matchNum}</div>
@@ -170,27 +197,27 @@ function createMatchCard(matchIndex) {
             </div>
         </div>
     `;
-    
+
     return card;
 }
 
 function startAnimation() {
     state.currentMatchIndex = 0;
-    
+
     const carousel = document.getElementById('match-carousel');
     if (carousel) {
         carousel.innerHTML = '';
-        
+
         const currentCard = createMatchCard(0);
         if (currentCard) { currentCard.classList.add('card-current'); carousel.appendChild(currentCard); }
-        
+
         const upcoming1 = createMatchCard(1);
         if (upcoming1) { upcoming1.classList.add('card-upcoming-1'); carousel.appendChild(upcoming1); }
-        
+
         const upcoming2 = createMatchCard(2);
         if (upcoming2) { upcoming2.classList.add('card-upcoming-2'); carousel.appendChild(upcoming2); }
     }
-    
+
     processNextMatch();
 }
 
@@ -224,20 +251,20 @@ function processNextMatch() {
             setTimeout(() => { if (prevCard.parentNode) prevCard.parentNode.removeChild(prevCard); }, 1000);
         }
     }
-    
+
     const cardCurrent = document.getElementById(`match-card-${matchIndex}`);
     if (cardCurrent) {
         cardCurrent.className = 'match-card card-current';
         cardCurrent.querySelector('.score-local').innerText = scoreL;
         cardCurrent.querySelector('.score-visit').innerText = scoreV;
     }
-    
+
     const next1 = document.getElementById(`match-card-${matchIndex + 1}`);
     if (next1) next1.className = 'match-card card-upcoming-1';
-    
+
     const next2 = document.getElementById(`match-card-${matchIndex + 2}`);
     if (next2) next2.className = 'match-card card-upcoming-2';
-    
+
     // Inject new upcoming
     if (!document.getElementById(`match-card-${matchIndex + 3}`)) {
         const newCard = createMatchCard(matchIndex + 3);
@@ -285,7 +312,7 @@ function processNextMatch() {
             if (container) {
                 container.style.height = `${340 + Math.max(0, state.users.length - 3) * state.barHeight}px`;
             }
-            
+
             const carousel = document.getElementById('match-carousel');
             if (carousel) {
                 carousel.style.opacity = '0';
@@ -338,7 +365,7 @@ function processNextMatch() {
                         user.element.style.transform = `translateY(${index * state.barHeight}px)`;
                         user.element.style.zIndex = state.users.length - index;
                     }
-                    
+
                     const rankEl = document.getElementById(`rank-${user.id}`);
                     if (rankEl) {
                         rankEl.innerText = index + 1;
@@ -346,7 +373,7 @@ function processNextMatch() {
                 }
             });
         }
-        
+
         state.currentMatchIndex++;
         scheduleNextMatch();
     };
@@ -355,7 +382,7 @@ function processNextMatch() {
         const top1 = state.users.find(u => u.rank === 0);
         const top2 = state.users.find(u => u.rank === 1);
         const top3 = state.users.find(u => u.rank === 2);
-        
+
         if (top1 && top1.element) top1.element.classList.add('pause-highlight-1');
         if (top2 && top2.element) top2.element.classList.add('pause-highlight-2');
         if (top3 && top3.element) top3.element.classList.add('pause-highlight-3');
@@ -374,7 +401,7 @@ function processNextMatch() {
     }
 }
 
-window.togglePause = function() {
+window.togglePause = function () {
     state.isManualPaused = !state.isManualPaused;
     const btn = document.getElementById('btn-manual-pause');
     if (state.isManualPaused) {
